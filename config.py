@@ -61,8 +61,10 @@ class Settings(BaseSettings):
     claude_model: str = "claude-3-5-sonnet-20241022"
     max_tokens: int = 4000
 
-    class Config:
-        env_file = ".env"
+    model_config = {
+        "env_file": ".env",
+        "extra": "ignore"
+    }
 
 
 # グローバル設定インスタンス
