@@ -25,20 +25,25 @@ class ClaudeSearch:
         self.model = model
         self.prompt_manager = PromptManager(prompts_dir)
 
-    def search_latest_ai_news(self, custom_prompt: str = None) -> Dict[str, Any]:
+    def search_latest_ai_news(self, custom_prompt: str = None, news_count: int = None) -> Dict[str, Any]:
         """最新AI情報をClaude Codeで検索"""
         try:
             client = anthropic.Anthropic(api_key=self.anthropic_api_key)
 
             # プロンプトの取得
             if not custom_prompt:
-                prompt = self.prompt_manager.get_prompt("default_search")
+                prompt = self.prompt_manager.get_prompt(
+                    "default_search", 
+                    news_count=str(news_count) if news_count else None
+                )
                 if not prompt:
                     logger.error("デフォルト検索プロンプトを取得できませんでした")
                     return {"status": "error", "message": "プロンプトの取得に失敗しました"}
             else:
                 prompt = self.prompt_manager.get_prompt(
-                    "custom_search", custom_prompt=custom_prompt
+                    "custom_search", 
+                    custom_prompt=custom_prompt,
+                    news_count=str(news_count) if news_count else None
                 )
                 if not prompt:
                     # フォールバック: カスタムプロンプトをそのまま使用

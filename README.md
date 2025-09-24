@@ -62,6 +62,7 @@ make run-custom PROMPT="GPT-5の最新情報について調べて"
 |---------|------|
 | `make install` | 依存関係をインストール |
 | `make run` | AI Agentを実行（デフォルトキャッチアップ） |
+| `make run-news NEWS_COUNT=N` | 重要ニュース件数を指定してキャッチアップを実行 |
 | `make run-no-issue` | Issue作成なしでキャッチアップを実行 |
 | `make run-topic TOPIC=<topic>` | 特定トピックの検索 |
 | `make run-weekly` | 週次レポート生成 |
@@ -79,18 +80,30 @@ make run-custom PROMPT="GPT-5の最新情報について調べて"
 - **レポート頻度**: daily, weekly, monthly
 - **レポート言語**: ja (日本語), en (英語)
 - **Claudeモデル**: 使用するAIモデル
+- **ニュース件数**: 重要ニュースの表示件数（デフォルト: 10）
 
 ### プロンプト設定 (`prompts/`ディレクトリ)
 プロンプトを外部YAMLファイルで管理できます：
 
-#### `prompts/default.yaml`
-- **default_search**: デフォルト検索プロンプト
+#### `prompts/default.yaml`（統合プロンプトファイル）
+- **key_words**: AI技術キーワードリスト（全プロンプトで共有）
+- **default_search**: デフォルト検索プロンプト（キーワード自動統合）
 - **topic_search**: 特定トピック検索プロンプト
 - **custom_search**: カスタム検索プロンプト
+- **weekly_report**: 週次レポートプロンプト（キーワード自動統合）
+- **monthly_summary**: 月次サマリープロンプト（キーワード自動統合）
 
-#### `prompts/reports.yaml`
-- **weekly_report**: 週次レポートプロンプト
-- **monthly_summary**: 月次サマリープロンプト
+#### 🤖 AI技術キーワード（単一管理）
+`key_words`キーで一元管理され、すべてのプロンプトで自動的に統合されます：
+- **AGI技術**: GPT-5, Claude Sonnet 4, Gemini Ultra
+- **AI技術**: RAG, Vector Database, AI Agent, Multimodal AI
+- **AI応用**: Healthcare AI, Finance AI, Education AI, Climate AI
+- **AI基盤**: AI Safety, Edge AI, AI Hardware, Quantum AI
+- **AI開発**: AI Code Generation, Developer Tools, AI-assisted Programming
+
+**メリット**: 
+- キーワードの更新時は`default.yaml`の`key_words`のみを修正すれば、すべてのプロンプトに自動反映されます
+- 全プロンプトが1つのファイルで管理され、保守性が向上します
 
 ## 🔄 自動化
 
@@ -107,7 +120,8 @@ schedule:
 
 - 🤖 **使用モデル**: 使用されたAIモデル名（本文とラベルに表示）
 - 🏷️ **自動ラベル**: `weekly-report`, `tech-insight`, `model:claude-3.5-sonnet` など
-- 🔥 **重要ニュース**: 上位3件の重要記事
+- 🎯 **トレンドワード優先**: 最新AI技術トレンドワードを重視した調査
+- 🔥 **重要ニュース**: 上位10件の重要記事（トレンドワード関連を優先）
 - 📈 **主要トレンド**: 技術トレンドの分析
 - 🚀 **技術的ハイライト**: 新技術や手法の説明
 - 💡 **開発者向けポイント**: 実践的なアドバイス
@@ -135,8 +149,7 @@ ai-tech-catchup-agent/
 │   └── claude.yml           # GitHub Actions設定
 ├── config.py                # 基本設定ファイル
 ├── prompts/                 # プロンプト設定ディレクトリ
-│   ├── default.yaml        # 基本検索プロンプト
-│   └── reports.yaml        # レポート用プロンプト
+│   └── default.yaml        # 統合プロンプトファイル（全プロンプト含む）
 ├── pyproject.toml          # プロジェクト設定
 ├── Makefile                # 開発用コマンド
 └── README.md               # このファイル

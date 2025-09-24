@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     claude_model: str = "claude-3-5-sonnet-20241022"
     max_tokens: int = 4000
 
+    # レポート詳細設定
+    news_count: int = 10  # 重要ニュースの件数
+
     model_config = {"env_file": ".env", "extra": "ignore"}
 
 

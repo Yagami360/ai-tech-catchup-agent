@@ -63,6 +63,22 @@ class PromptManager:
 
         prompt_config = self.prompts[prompt_type]
 
+        # キーワードを動的に統合
+        if "key_words" in self.prompts and "key_words" in kwargs:
+            # key_wordsパラメータが渡された場合、key_wordsキーから取得
+            key_words_config = self.prompts["key_words"]
+            if "keywords" in key_words_config:
+                kwargs["key_words"] = key_words_config["keywords"]
+        elif "key_words" in self.prompts:
+            # 自動的にkey_wordsを統合
+            key_words_config = self.prompts["key_words"]
+            if "keywords" in key_words_config:
+                kwargs["key_words"] = key_words_config["keywords"]
+
+        # ニュース件数を動的に設定（デフォルト値: 10）
+        if "news_count" not in kwargs:
+            kwargs["news_count"] = "10"
+
         if "template" in prompt_config:
             # テンプレートプロンプト（変数置換あり）
             template = prompt_config["template"]
@@ -73,7 +89,14 @@ class PromptManager:
                 return template
         elif "prompt" in prompt_config:
             # 固定プロンプト
-            return prompt_config["prompt"]
+            prompt_text = prompt_config["prompt"]
+            # キーワードが含まれている場合は置換
+            if "{key_words}" in prompt_text and "key_words" in kwargs:
+                prompt_text = prompt_text.replace("{key_words}", kwargs["key_words"])
+            # ニュース件数が含まれている場合は置換
+            if "{news_count}" in prompt_text and "news_count" in kwargs:
+                prompt_text = prompt_text.replace("{news_count}", kwargs["news_count"])
+            return prompt_text
         else:
             logger.error(f"プロンプト設定が無効です: {prompt_type}")
             return None
@@ -131,3 +154,16 @@ class PromptManager:
                     logger.info(f"{prompt_type}: テンプレート変数 {variables}")
 
         return {"errors": errors, "warnings": warnings}
+
+    def get_key_words(self) -> Optional[str]:
+        """キーワードを取得"""
+        if "key_words" not in self.prompts:
+            logger.warning("key_wordsが見つかりません")
+            return None
+        
+        key_words_config = self.prompts["key_words"]
+        if "keywords" in key_words_config:
+            return key_words_config["keywords"]
+        
+        logger.warning("key_wordsのkeywordsが見つかりません")
+        return None

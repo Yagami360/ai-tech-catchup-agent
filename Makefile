@@ -8,6 +8,10 @@ install:
 run:
 	uv run python -m src.main
 
+# Run AI Agent with custom news count
+run-news:
+	uv run python -m src.main --news-count $(NEWS_COUNT)
+
 # Run AI Agent without creating GitHub Issues
 run-no-issue:
 	uv run python -m src.main --no-issue
@@ -64,6 +68,7 @@ help:
 	@echo "Available commands:"
 	@echo "  make install        - Install dependencies"
 	@echo "  make run            - Run AI Agent (daily catchup)"
+	@echo "  make run-news NEWS_COUNT=N - Run AI Agent with custom news count"
 	@echo "  make run-no-issue   - Run AI Agent without creating GitHub Issues"
 	@echo "  make run-topic TOPIC=   - Run analysis for specific topic"
 	@echo "  make run-weekly     - Generate weekly report"

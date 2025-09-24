@@ -32,7 +32,7 @@ class AITechCatchupAgent:
         )
 
     def run_catchup(
-        self, custom_prompt: str = None, create_issue: bool = True
+        self, custom_prompt: str = None, create_issue: bool = True, news_count: int = None
     ) -> Dict[str, Any]:
         """Claude Codeで最新AI情報をキャッチアップ"""
         logger.info("Claude CodeでAI技術キャッチアップを開始...")
@@ -41,7 +41,9 @@ class AITechCatchupAgent:
             # 1. Claude Codeで最新情報を検索
             logger.info("Claude Codeで最新情報を検索中...")
             logger.debug(f"カスタムプロンプト: {custom_prompt}")
-            search_result = self.claude_search.search_latest_ai_news(custom_prompt)
+            search_result = self.claude_search.search_latest_ai_news(
+                custom_prompt, news_count=news_count or settings.news_count
+            )
 
             if search_result["status"] != "success":
                 logger.error(f"Claude Code検索エラー: {search_result['message']}")
@@ -118,6 +120,20 @@ def main():
     no_issue = "--no-issue" in sys.argv
     if no_issue:
         sys.argv.remove("--no-issue")  # フラグを削除して通常の引数処理に影響しないようにする
+    
+    # --news-countオプションをチェック
+    news_count = None
+    if "--news-count" in sys.argv:
+        try:
+            index = sys.argv.index("--news-count")
+            if index + 1 < len(sys.argv):
+                news_count = int(sys.argv[index + 1])
+                # オプションと値を削除
+                sys.argv.pop(index)
+                sys.argv.pop(index)
+        except (ValueError, IndexError):
+            logger.error("--news-countには有効な数値を指定してください")
+            sys.exit(1)
 
     # コマンドライン引数で実行モードを指定
     if len(sys.argv) > 1:
@@ -149,17 +165,18 @@ def main():
                     result["issue_url"] = issue_result.get("html_url", "")
         elif mode == "custom":
             prompt = " ".join(sys.argv[2:]) if len(sys.argv) > 2 else None
-            result = agent.run_catchup(prompt, create_issue=not no_issue)
+            result = agent.run_catchup(prompt, create_issue=not no_issue, news_count=news_count)
         else:
             print(
-                "使用法: python main.py [topic <topic>|weekly|monthly|custom <prompt>] [--no-issue]"
+                "使用法: python main.py [topic <topic>|weekly|monthly|custom <prompt>] [--no-issue] [--news-count N]"
             )
             print("引数なしで実行するとデフォルトのキャッチアップを実行します")
             print("--no-issueフラグを指定するとGitHub Issueを作成しません")
+            print("--news-count N で重要ニュースの件数を指定できます（デフォルト: 10）")
             sys.exit(1)
     else:
         # デフォルトでキャッチアップを実行
-        result = agent.run_catchup(create_issue=not no_issue)
+        result = agent.run_catchup(create_issue=not no_issue, news_count=news_count)
 
     # 結果を出力
     print(f"実行結果: {result}")

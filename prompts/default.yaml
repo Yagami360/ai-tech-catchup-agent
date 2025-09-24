@@ -1,8 +1,41 @@
 # AI Tech Catchup Agent プロンプト設定
+
+key_words:
+  title: "AI技術キーワード"
+  keywords: |
+    **AI技術トレンドワード**:
+    - AGI (人工汎用知能)
+    - Multimodal AI, VLM, Vision-Language Models, VLA, Vision-Language Actions
+    - LLM, ChatGPT, Claude, Gemini, Qwen, Llama
+    - RAG, Retrieval-Augmented Generation
+    - AI Agent, Multi-Agent Systems
+    - Local LLM
+    - Vibe Coding, AI Code Generation
+    - Computer Vision
+    - Audio AI, Voice AI
+    - AI Safety, Explainable AI, AI Regulation, AI Governance, AI Policy
+    - AI in Healthcare, Medical AI, Material AI
+    - AI in Climate, Green AI, Sustainability AI
+    - Robotics, Pyshical AI, Humanoid Robots
+    - Digital Twins, Simulation
+    - AI Hardware, AI Chips, Edge AI, GPU, TPU, NPU
+    - Synthetic Data
+    - NVIDIA, Nvidia
+    - Google, GCP, Vertex AI, Gemini
+    - Microsoft, Azure, Copilot
+    - OpenAI, ChatGPT, GPT
+    - Anthropic, Claude, Claude Code
+    - China, Baidu, DeepSeek, Tencent, Unitree
+
 default_search:
   title: "最新AI技術動向検索"
   prompt: |
     あなたは最新のAI技術動向を調査する専門家です。利用可能なWeb検索機能を最大限活用して、以下の手順で最新情報を調査してください：
+
+    ## 重要トレンドワード（優先的に調査）
+    以下のキーワードに関連する最新情報を特に重視して調査してください：
+
+    {key_words}
 
     ## 調査手順
     1. **最新AI企業の発表を検索**：
@@ -10,6 +43,7 @@ default_search:
        - 新製品、新機能、研究論文の公開
 
     2. **技術トレンドを調査**：
+       - 上記トレンドワードに関連する最新動向
        - 大規模言語モデルの進歩
        - マルチモーダルAIの発展
        - AI Agent技術の最新動向
@@ -27,8 +61,10 @@ default_search:
     以下の形式で詳細なレポートを作成してください：
 
     ## 📊 最新AI技術動向レポート
+    - レポート作成日時：[YYYY-MM-DDでの日本時間]
+    - 使用モデル：[レポート作成に使用した LLM モデル名]
 
-    ### 🔥 重要ニュース（上位10件）
+    ### 🔥 重要ニュース（上位{news_count}件）
     [具体的なニュースタイトルと詳細説明、URL付き]
 
     ### 📈 主要トレンド
@@ -43,7 +79,8 @@ default_search:
     ### 📚 関連リソース
     [各情報源のURLと簡単な説明]
 
-    **重要**: 必ずWeb検索機能を使用し、2025年以降の最新情報のみを報告してください。推測や一般的な情報ではなく、具体的で検証可能な情報を提供してください。
+    **重要**: 必ずWeb検索機能を使用し、利用可能な最新情報のみを報告してください。推測や一般的な情報ではなく、具体的で検証可能な情報を提供してください。
+    調査手順は、レポートに含めないで良いです。
 
 topic_search:
   title: "特定トピック検索"
@@ -67,3 +104,51 @@ custom_search:
 
     上記のリクエストについて、Web検索機能を使って最新の情報を調査し、詳細なレポートを作成してください。
     信頼できる情報源から具体的な情報を取得し、実用的な洞察を提供してください。
+
+weekly_report:
+  title: "週次レポート"
+  prompt: |
+    今週のAI技術動向について、Web検索機能を使って包括的なレポートを作成してください。
+
+    ## 重要トレンドワード（優先的に調査）
+    以下のキーワードに関連する最新情報を特に重視して調査してください：
+
+    {key_words}
+
+    ## 調査対象
+    - 主要AI企業（OpenAI、Anthropic、Google、Microsoft）の発表
+    - 上記トレンドワードに関連する最新動向
+    - 学術研究の最新動向
+    - 業界ニュースと投資動向
+    - 新技術・新製品の発表
+
+    ## レポート構成
+    ### 🔥 今週の重要ニュース
+    ### 📈 技術トレンド分析
+    ### 🚀 注目の技術・製品
+    ### 💡 開発者への影響
+    ### 📚 学習リソース
+
+    各セクションで具体的な事例とURLを含めて報告してください。
+
+monthly_summary:
+  title: "月次サマリー"
+  prompt: |
+    今月のAI技術動向を振り返り、重要な変化と今後の展望をまとめた月次サマリーを作成してください。
+
+    ## 重要トレンドワード（優先的に調査）
+    以下のキーワードに関連する最新情報を特に重視して調査してください：
+
+    {key_words}
+
+    ## 調査範囲
+    - 月間の主要発表・イベント
+    - 上記トレンドワードに関連する技術的ブレークスルー
+    - 業界の変化・トレンド
+    - 次月への展望
+
+    ## サマリー構成
+    ### 📊 月間ハイライト
+    ### 🔄 技術的変化
+    ### 📈 市場動向
+    ### 🔮 今後の展望
