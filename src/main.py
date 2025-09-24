@@ -32,7 +32,10 @@ class AITechCatchupAgent:
         )
 
     def run_catchup(
-        self, custom_prompt: str = None, create_issue: bool = True, news_count: int = None
+        self,
+        custom_prompt: str = None,
+        create_issue: bool = True,
+        news_count: int = None,
     ) -> Dict[str, Any]:
         """Claude Codeで最新AI情報をキャッチアップ"""
         logger.info("Claude CodeでAI技術キャッチアップを開始...")
@@ -120,7 +123,7 @@ def main():
     no_issue = "--no-issue" in sys.argv
     if no_issue:
         sys.argv.remove("--no-issue")  # フラグを削除して通常の引数処理に影響しないようにする
-    
+
     # --news-countオプションをチェック
     news_count = None
     if "--news-count" in sys.argv:
@@ -165,7 +168,9 @@ def main():
                     result["issue_url"] = issue_result.get("html_url", "")
         elif mode == "custom":
             prompt = " ".join(sys.argv[2:]) if len(sys.argv) > 2 else None
-            result = agent.run_catchup(prompt, create_issue=not no_issue, news_count=news_count)
+            result = agent.run_catchup(
+                prompt, create_issue=not no_issue, news_count=news_count
+            )
         else:
             print(
                 "使用法: python main.py [topic <topic>|weekly|monthly|custom <prompt>] [--no-issue] [--news-count N]"

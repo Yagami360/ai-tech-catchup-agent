@@ -22,11 +22,11 @@ class Settings(BaseSettings):
     report_language: str = "ja"  # ja, en
 
     # Claude設定
-    claude_model: str = "claude-3-5-sonnet-20241022"
-    max_tokens: int = 4000
+    claude_model: str = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514")
+    max_tokens: int = os.getenv("MAX_TOKENS", 100000)
 
     # レポート詳細設定
-    news_count: int = 10  # 重要ニュースの件数
+    news_count: int = os.getenv("NEWS_COUNT", 10)
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 

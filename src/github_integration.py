@@ -26,27 +26,20 @@ class GitHubIntegration:
 
     def _format_model_label(self, model_name: str) -> str:
         """モデル名をラベル用にフォーマット"""
-        # モデル名を短縮形に変換
-        model_mapping = {
-            "claude-3-5-sonnet-20241022": "claude-3.5-sonnet",
-            "claude-3-5-haiku-20241022": "claude-3.5-haiku",
-            "claude-3-opus-20240229": "claude-3-opus",
-            "gpt-4": "gpt-4",
-            "gpt-4-turbo": "gpt-4-turbo",
-            "gpt-3.5-turbo": "gpt-3.5-turbo",
-        }
+        # ラベル名の最大長（GitHubの制限を考慮）
+        max_label_length = 50
+        prefix = "model:"
 
-        # マッピングにない場合は汎用的な形式で作成
-        if model_name in model_mapping:
-            return f"model:{model_mapping[model_name]}"
+        # プレフィックス + モデル名の長さをチェック
+        full_label = f"{prefix}{model_name}"
+
+        if len(full_label) <= max_label_length:
+            return full_label
         else:
-            # モデル名から主要部分を抽出
-            if "claude" in model_name.lower():
-                return "model:claude"
-            elif "gpt" in model_name.lower():
-                return "model:gpt"
-            else:
-                return f"model:{model_name.split('-')[0]}"
+            # 文字数オーバーの場合は先頭から切り取り
+            available_length = max_label_length - len(prefix)
+            truncated_model = model_name[:available_length]
+            return f"{prefix}{truncated_model}"
 
     def create_issue(
         self,
@@ -57,14 +50,6 @@ class GitHubIntegration:
     ) -> Dict[str, Any]:
         """GitHub Issueを作成"""
         try:
-            # モデル名がある場合は本文に追加
-            if model_name:
-                body = f"""**使用モデル**: `{model_name}`
-
----
-
-{body}"""
-
             # ラベルにモデル名を追加
             issue_labels = labels or []
             if model_name:
@@ -112,26 +97,6 @@ class GitHubIntegration:
             logger.error(f"Issue作成に失敗: {e}")
             return {"error": str(e)}
 
-    def create_pr(
-        self, title: str, body: str, head: str, base: str = "main"
-    ) -> Dict[str, Any]:
-        """Pull Requestを作成"""
-        try:
-            data = {"title": title, "body": body, "head": head, "base": base}
-
-            response = requests.post(
-                f"{self.base_url}/pulls", headers=self.headers, data=json.dumps(data)
-            )
-            response.raise_for_status()
-
-            pr_data = response.json()
-            logger.info(f"PR created: {pr_data['html_url']}")
-            return pr_data
-
-        except Exception as e:
-            logger.error(f"PR作成に失敗: {e}")
-            return {"error": str(e)}
-
     def create_weekly_report_issue(
         self, report_content: str, model_name: Optional[str] = None
     ) -> Dict[str, Any]:
@@ -142,8 +107,8 @@ class GitHubIntegration:
         # Issue本文をフォーマット
         body = f"""# 🤖 AI Tech Catchup Weekly Report
 
-**レポート日時**: {datetime.now().strftime("%Y-%m-%d %H:%M")}
-
+- レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
+- 使用モデル: `{model_name}`
 ---
 
 {report_content}
@@ -174,8 +139,8 @@ class GitHubIntegration:
 
         body = f"""# {category}: {title}
 
-**作成日時**: {datetime.now().strftime("%Y年%m月%d日 %H:%M")}
-
+- レポート日時: `{datetime.now().strftime("%Y年%m月%d日 %H:%M")}`
+- 使用モデル: `{model_name}`
 ---
 
 {content}

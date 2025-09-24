@@ -79,6 +79,24 @@ class PromptManager:
         if "news_count" not in kwargs:
             kwargs["news_count"] = "10"
 
+        # 現在の年号を動的に設定
+        if "current_year" not in kwargs:
+            from datetime import datetime
+            kwargs["current_year"] = str(datetime.now().year)
+
+        # 期間を動的に設定
+        if "week_period" not in kwargs:
+            from datetime import datetime, timedelta
+            today = datetime.now()
+            week_ago = today - timedelta(days=7)
+            kwargs["week_period"] = f"{week_ago.strftime('%Y年%m月%d日')}から{today.strftime('%Y年%m月%d日')}までの過去1週間"
+
+        if "month_period" not in kwargs:
+            from datetime import datetime, timedelta
+            today = datetime.now()
+            month_ago = today - timedelta(days=30)
+            kwargs["month_period"] = f"{month_ago.strftime('%Y年%m月%d日')}から{today.strftime('%Y年%m月%d日')}までの過去1ヶ月"
+
         if "template" in prompt_config:
             # テンプレートプロンプト（変数置換あり）
             template = prompt_config["template"]
@@ -96,6 +114,15 @@ class PromptManager:
             # ニュース件数が含まれている場合は置換
             if "{news_count}" in prompt_text and "news_count" in kwargs:
                 prompt_text = prompt_text.replace("{news_count}", kwargs["news_count"])
+            # 現在の年号が含まれている場合は置換
+            if "{current_year}" in prompt_text and "current_year" in kwargs:
+                prompt_text = prompt_text.replace("{current_year}", kwargs["current_year"])
+            # 週間期間が含まれている場合は置換
+            if "{week_period}" in prompt_text and "week_period" in kwargs:
+                prompt_text = prompt_text.replace("{week_period}", kwargs["week_period"])
+            # 月間期間が含まれている場合は置換
+            if "{month_period}" in prompt_text and "month_period" in kwargs:
+                prompt_text = prompt_text.replace("{month_period}", kwargs["month_period"])
             return prompt_text
         else:
             logger.error(f"プロンプト設定が無効です: {prompt_type}")
@@ -160,10 +187,10 @@ class PromptManager:
         if "key_words" not in self.prompts:
             logger.warning("key_wordsが見つかりません")
             return None
-        
+
         key_words_config = self.prompts["key_words"]
         if "keywords" in key_words_config:
             return key_words_config["keywords"]
-        
+
         logger.warning("key_wordsのkeywordsが見つかりません")
         return None
