@@ -7,7 +7,7 @@ on:
     - cron: '0 9 * * 5'
 
 jobs:
-  ai-catchup:
+  ai-tech-catchup:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -39,7 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
-          make run
+          make run-weekly
 
       - name: Create summary
         if: always()

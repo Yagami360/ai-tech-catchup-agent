@@ -1,5 +1,4 @@
 # レポート用プロンプト設定
-
 weekly_report:
   title: "週次レポート"
   prompt: |
