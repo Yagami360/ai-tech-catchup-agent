@@ -8,8 +8,25 @@ install:
 run:
 	uv run python -m src.main
 
-run-insight:
-	uv run python -m src.main insight $(TOPIC)
+# Run AI Agent without creating GitHub Issues
+run-no-issue:
+	uv run python -m src.main --no-issue
+
+# 特定トピックの検索
+run-topic:
+	uv run python -m src.main topic $(TOPIC)
+
+# 週次レポート
+run-weekly:
+	uv run python -m src.main weekly
+
+# 月次サマリー
+run-monthly:
+	uv run python -m src.main monthly
+
+# カスタムプロンプトで検索
+run-custom:
+	uv run python -m src.main custom "$(PROMPT)"
 
 # Run tests
 test:
@@ -45,12 +62,16 @@ update:
 # Display help
 help:
 	@echo "Available commands:"
-	@echo "  make install  - Install dependencies"
-	@echo "  make run      - Run AI Agent (daily catchup)"
-	@echo "  make insight TOPIC=<topic> - Run analysis for specific topic"
-	@echo "  make test     - Run tests"
-	@echo "  make lint     - Run code linting"
-	@echo "  make format   - Run code formatting"
-	@echo "  make clean    - Clean up environment"
-	@echo "  make setup    - Setup development environment"
-	@echo "  make update   - Update dependencies"
+	@echo "  make install        - Install dependencies"
+	@echo "  make run            - Run AI Agent (daily catchup)"
+	@echo "  make run-no-issue   - Run AI Agent without creating GitHub Issues"
+	@echo "  make run-topic TOPIC=   - Run analysis for specific topic"
+	@echo "  make run-weekly     - Generate weekly report"
+	@echo "  make run-monthly    - Generate monthly summary"
+	@echo "  make run-custom PROMPT= - Run custom prompt search"
+	@echo "  make test           - Run tests"
+	@echo "  make lint           - Run code linting"
+	@echo "  make format         - Run code formatting"
+	@echo "  make clean          - Clean up environment"
+	@echo "  make setup          - Setup development environment"
+	@echo "  make update         - Update dependencies"

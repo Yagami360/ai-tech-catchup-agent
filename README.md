@@ -1,12 +1,12 @@
 # 🤖 AI Tech Catchup Agent
 
-最新AI技術情報を自動収集・分析し、週次レポートをGitHub Issueで提供するAI Agentです。
+Claude CodeのWeb検索機能を活用して、最新AI技術情報を取得・分析し、週次レポートをGitHub Issueで提供するAI Agentです。
 
 ## ✨ 主な機能
 
-- **自動情報収集**: RSSフィードから最新AI技術記事を収集
-- **AI分析**: Claude APIを使用した記事の分析と要約
-- **週次レポート**: 毎週金曜日にGitHub Issueでレポートを自動生成
+- **Claude Code統合**: ClaudeのWeb検索機能を活用した最新情報取得
+- **自動レポート生成**: 毎週金曜日にGitHub Issueでレポートを自動生成
+- **カスタム検索**: 任意のプロンプトで特定トピックを検索
 - **技術インサイト**: 特定トピックの深掘り分析
 - **日本語対応**: 日本語でのレポート生成
 
@@ -40,11 +40,20 @@ make setup
 ### 3. 実行
 
 ```bash
-# キャッチアップの実行
+# デフォルトキャッチアップの実行
 make run
 
-# 特定トピックの分析
-make insight TOPIC="大規模言語モデル"
+# 特定トピックの検索
+make run-topic TOPIC="大規模言語モデル"
+
+# 週次レポート
+make run-weekly
+
+# 月次サマリー
+make run-monthly
+
+# カスタムプロンプトで検索
+make run-custom PROMPT="GPT-5の最新情報について調べて"
 ```
 
 ## 📋 利用可能なコマンド
@@ -52,8 +61,12 @@ make insight TOPIC="大規模言語モデル"
 | コマンド | 説明 |
 |---------|------|
 | `make install` | 依存関係をインストール |
-| `make run` | AI Agentを実行（キャッチアップ） |
-| `make insight TOPIC=<topic>` | 特定トピックの分析 |
+| `make run` | AI Agentを実行（デフォルトキャッチアップ） |
+| `make run-no-issue` | Issue作成なしでキャッチアップを実行 |
+| `make run-topic TOPIC=<topic>` | 特定トピックの検索 |
+| `make run-weekly` | 週次レポート生成 |
+| `make run-monthly` | 月次サマリー生成 |
+| `make run-custom PROMPT="<prompt>"` | カスタムプロンプトで検索 |
 | `make test` | テストを実行 |
 | `make lint` | コードのリンティング |
 | `make format` | コードのフォーマット |
@@ -62,12 +75,22 @@ make insight TOPIC="大規模言語モデル"
 
 ## ⚙️ 設定
 
-`config.py`で以下の設定をカスタマイズできます：
-
-- **RSSフィード**: 収集する情報源
-- **検索キーワード**: 関心のある技術分野
+### 基本設定 (`config.py`)
 - **レポート頻度**: daily, weekly, monthly
+- **レポート言語**: ja (日本語), en (英語)
 - **Claudeモデル**: 使用するAIモデル
+
+### プロンプト設定 (`prompts/`ディレクトリ)
+プロンプトを外部YAMLファイルで管理できます：
+
+#### `prompts/default.yaml`
+- **default_search**: デフォルト検索プロンプト
+- **topic_search**: 特定トピック検索プロンプト
+- **custom_search**: カスタム検索プロンプト
+
+#### `prompts/reports.yaml`
+- **weekly_report**: 週次レポートプロンプト
+- **monthly_summary**: 月次サマリープロンプト
 
 ## 🔄 自動化
 
@@ -82,6 +105,8 @@ schedule:
 
 生成されるレポートには以下が含まれます：
 
+- 🤖 **使用モデル**: 使用されたAIモデル名（本文とラベルに表示）
+- 🏷️ **自動ラベル**: `weekly-report`, `tech-insight`, `model:claude-3.5-sonnet` など
 - 🔥 **重要ニュース**: 上位3件の重要記事
 - 📈 **主要トレンド**: 技術トレンドの分析
 - 🚀 **技術的ハイライト**: 新技術や手法の説明
@@ -92,9 +117,9 @@ schedule:
 
 - **Python 3.8+**: メイン言語
 - **uv**: パッケージ管理
-- **Anthropic Claude**: AI分析エンジン
+- **Anthropic Claude**: AI分析エンジン（Web検索機能付き）
 - **GitHub Actions**: CI/CD自動化
-- **RSS/Webスクレイピング**: 情報収集
+- **GitHub API**: Issue作成・管理
 
 ## 📁 プロジェクト構造
 
@@ -103,12 +128,15 @@ ai-tech-catchup-agent/
 ├── src/
 │   ├── __init__.py
 │   ├── main.py              # メインアプリケーション
-│   ├── data_collector.py    # データ収集モジュール
-│   ├── ai_analyzer.py       # AI分析モジュール
+│   ├── claude_search.py     # Claude Code検索機能
+│   ├── prompt_manager.py    # プロンプト管理機能
 │   └── github_integration.py # GitHub統合モジュール
 ├── .github/workflows/
 │   └── claude.yml           # GitHub Actions設定
-├── config.py                # 設定ファイル
+├── config.py                # 基本設定ファイル
+├── prompts/                 # プロンプト設定ディレクトリ
+│   ├── default.yaml        # 基本検索プロンプト
+│   └── reports.yaml        # レポート用プロンプト
 ├── pyproject.toml          # プロジェクト設定
 ├── Makefile                # 開発用コマンド
 └── README.md               # このファイル

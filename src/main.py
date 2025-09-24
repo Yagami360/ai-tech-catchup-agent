@@ -7,9 +7,7 @@ from datetime import datetime
 from typing import Any, Dict
 
 from config import settings
-
-from .ai_analyzer import AIAnalyzer
-from .data_collector import DataCollector
+from .claude_search import ClaudeSearch
 from .github_integration import GitHubIntegration
 
 # ログ設定
@@ -26,97 +24,89 @@ class AITechCatchupAgent:
     """AI Tech Catchup Agent メインクラス"""
 
     def __init__(self):
-        self.data_collector = DataCollector(settings.rss_feeds)
-        self.ai_analyzer = AIAnalyzer(
-            api_key=settings.anthropic_api_key, model=settings.claude_model
+        self.claude_search = ClaudeSearch(
+            anthropic_api_key=settings.anthropic_api_key, model=settings.claude_model
         )
         self.github_integration = GitHubIntegration(
             token=settings.github_token, repo=settings.github_repo
         )
 
-    def run_catchup(self) -> Dict[str, Any]:
-        """キャッチアップを実行"""
-        logger.info("AI技術キャッチアップを開始...")
+    def run_catchup(
+        self, custom_prompt: str = None, create_issue: bool = True
+    ) -> Dict[str, Any]:
+        """Claude Codeで最新AI情報をキャッチアップ"""
+        logger.info("Claude CodeでAI技術キャッチアップを開始...")
 
         try:
-            # 1. 記事を収集
-            logger.info("最新記事を収集中...")
-            articles = self.data_collector.search_articles_by_keywords(
-                settings.search_keywords
-            )
+            # 1. Claude Codeで最新情報を検索
+            logger.info("Claude Codeで最新情報を検索中...")
+            logger.debug(f"カスタムプロンプト: {custom_prompt}")
+            search_result = self.claude_search.search_latest_ai_news(custom_prompt)
 
-            if not articles:
-                logger.warning("収集された記事がありません")
-                return {"status": "warning", "message": "記事が見つかりませんでした"}
+            if search_result["status"] != "success":
+                logger.error(f"Claude Code検索エラー: {search_result['message']}")
+                return {"status": "error", "message": search_result["message"]}
 
-            logger.info(f"{len(articles)}件の記事を収集しました")
-
-            # 2. AI分析
-            logger.info("記事を分析中...")
-            analysis_result = self.ai_analyzer.analyze_articles(
-                articles, settings.report_language
-            )
-
-            if "error" in analysis_result:
-                logger.error(f"分析エラー: {analysis_result['error']}")
-                return {"status": "error", "message": analysis_result["error"]}
-
-            # 3. GitHub Issue作成
-            logger.info("GitHub Issueを作成中...")
-            issue_result = self.github_integration.create_weekly_report_issue(
-                analysis_result["analysis"]
-            )
-
-            if "error" in issue_result:
-                logger.error(f"Issue作成エラー: {issue_result['error']}")
-                return {"status": "error", "message": issue_result["error"]}
-
-            logger.info(f"週間レポートIssueを作成しました: {issue_result.get('html_url', '')}")
-
-            return {
+            result = {
                 "status": "success",
-                "articles_count": len(articles),
-                "issue_url": issue_result.get("html_url", ""),
-                "analysis": analysis_result["analysis"],
+                "content": search_result["content"],
+                "searched_at": search_result["searched_at"],
             }
+
+            # 2. GitHub Issue作成（オプション）
+            if create_issue:
+                logger.info("GitHub Issueを作成中...")
+                issue_result = self.github_integration.create_weekly_report_issue(
+                    search_result["content"], model_name=self.claude_search.model
+                )
+
+                if "error" in issue_result:
+                    logger.error(f"Issue作成エラー: {issue_result['error']}")
+                    return {"status": "error", "message": issue_result["error"]}
+
+                logger.info(f"週間レポートIssueを作成しました: {issue_result.get('html_url', '')}")
+                result["issue_url"] = issue_result.get("html_url", "")
+            else:
+                logger.info("GitHub Issue作成をスキップしました")
+
+            return result
 
         except Exception as e:
             logger.error(f"キャッチアップ実行中にエラー: {e}")
             return {"status": "error", "message": str(e)}
 
-    def run_tech_insight_analysis(self, topic: str) -> Dict[str, Any]:
-        """特定トピックの技術インサイト分析を実行"""
-        logger.info(f"技術インサイト分析を開始: {topic}")
+    def search_topic(self, topic: str, create_issue: bool = True) -> Dict[str, Any]:
+        """特定トピックについてClaude Codeで検索"""
+        logger.info(f"特定トピック検索を開始: {topic}")
 
         try:
-            # トピックに関連する記事を収集
-            articles = self.data_collector.search_articles_by_keywords([topic])
+            search_result = self.claude_search.search_specific_topic(topic)
 
-            if not articles:
-                return {"status": "warning", "message": f"'{topic}'に関する記事が見つかりませんでした"}
+            if search_result["status"] != "success":
+                return {"status": "error", "message": search_result["message"]}
 
-            # 分析実行
-            analysis_result = self.ai_analyzer.analyze_articles(articles)
-
-            if "error" in analysis_result:
-                return {"status": "error", "message": analysis_result["error"]}
-
-            # GitHub Issue作成
-            issue_result = self.github_integration.create_tech_insight_issue(
-                title=f"{topic}に関する最新動向",
-                content=analysis_result["analysis"],
-                category="Tech Insight",
-            )
-
-            return {
+            result = {
                 "status": "success",
                 "topic": topic,
-                "articles_count": len(articles),
-                "issue_url": issue_result.get("html_url", ""),
+                "content": search_result["content"],
             }
 
+            # GitHub Issue作成（オプション）
+            if create_issue:
+                issue_result = self.github_integration.create_tech_insight_issue(
+                    title=f"{topic}に関する最新動向",
+                    content=search_result["content"],
+                    category="Tech Insight",
+                    model_name=self.claude_search.model,
+                )
+                result["issue_url"] = issue_result.get("html_url", "")
+            else:
+                logger.info("GitHub Issue作成をスキップしました")
+
+            return result
+
         except Exception as e:
-            logger.error(f"技術インサイト分析中にエラー: {e}")
+            logger.error(f"トピック検索中にエラー: {e}")
             return {"status": "error", "message": str(e)}
 
 
@@ -124,19 +114,52 @@ def main():
     """メイン関数"""
     agent = AITechCatchupAgent()
 
+    # --no-issueフラグをチェック
+    no_issue = "--no-issue" in sys.argv
+    if no_issue:
+        sys.argv.remove("--no-issue")  # フラグを削除して通常の引数処理に影響しないようにする
+
     # コマンドライン引数で実行モードを指定
     if len(sys.argv) > 1:
         mode = sys.argv[1]
-        if mode == "insight":
-            topic = sys.argv[2] if len(sys.argv) > 2 else "AI技術"
-            result = agent.run_tech_insight_analysis(topic)
+        if mode == "topic":
+            topic = sys.argv[2] if len(sys.argv) > 2 else "大規模言語モデル"
+            result = agent.search_topic(topic, create_issue=not no_issue)
+        elif mode == "weekly":
+            result = agent.claude_search.search_weekly_report()
+            if result["status"] == "success" and not no_issue:
+                # GitHub Issue作成
+                issue_result = agent.github_integration.create_issue(
+                    title=f"週次AI技術レポート - {datetime.now().strftime('%Y年%m月%d日')}",
+                    body=result["content"],
+                    model_name=agent.claude_search.model,
+                )
+                if issue_result.get("html_url"):
+                    result["issue_url"] = issue_result.get("html_url", "")
+        elif mode == "monthly":
+            result = agent.claude_search.search_monthly_summary()
+            if result["status"] == "success" and not no_issue:
+                # GitHub Issue作成
+                issue_result = agent.github_integration.create_issue(
+                    title=f"月次AI技術サマリー - {datetime.now().strftime('%Y年%m月')}",
+                    body=result["content"],
+                    model_name=agent.claude_search.model,
+                )
+                if issue_result.get("html_url"):
+                    result["issue_url"] = issue_result.get("html_url", "")
+        elif mode == "custom":
+            prompt = " ".join(sys.argv[2:]) if len(sys.argv) > 2 else None
+            result = agent.run_catchup(prompt, create_issue=not no_issue)
         else:
-            print("使用法: python main.py [insight [topic]]")
-            print("引数なしで実行するとキャッチアップを実行します")
+            print(
+                "使用法: python main.py [topic <topic>|weekly|monthly|custom <prompt>] [--no-issue]"
+            )
+            print("引数なしで実行するとデフォルトのキャッチアップを実行します")
+            print("--no-issueフラグを指定するとGitHub Issueを作成しません")
             sys.exit(1)
     else:
         # デフォルトでキャッチアップを実行
-        result = agent.run_catchup()
+        result = agent.run_catchup(create_issue=not no_issue)
 
     # 結果を出力
     print(f"実行結果: {result}")
