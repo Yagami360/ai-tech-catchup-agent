@@ -1,4 +1,4 @@
-.PHONY: install run test clean lint format
+.PHONY: install update setup run run-news run-no-issue run-weekly run-monthly run-topic run-custom lint format
 
 # Install dependencies
 install:
