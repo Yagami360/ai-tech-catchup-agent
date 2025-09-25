@@ -1,4 +1,4 @@
-name: AI Tech Catchup with Claude Code Actions
+name: AI Tech Catchup Agent with Claude Code Actions
 
 on:
   workflow_dispatch:
@@ -57,8 +57,6 @@ jobs:
             --body "## $TITLE
 
           - **実行日時**: $(date '+%Y年%m月%d日 %H:%M')
-          - **使用モデル**: claude-3-5-sonnet-20241022
-          - **ワークフロー**: ${{ github.workflow }}
 
           ---
 
@@ -67,7 +65,6 @@ jobs:
           ---
 
           *このレポートは Claude Code Actions によって自動生成されました。*" \
-            --label "ai-report,claude-code" \
             --repo ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
