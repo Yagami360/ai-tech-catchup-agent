@@ -16,19 +16,19 @@ run-news:
 run-no-issue:
 	uv run python -m src.main --no-issue
 
-# 特定トピックの検索
-run-topic:
-	uv run python -m src.main topic $(TOPIC)
-
-# 週次レポート
+# Run AI Agent for weekly report
 run-weekly:
 	uv run python -m src.main weekly
 
-# 月次サマリー
+# Run AI Agent for monthly report
 run-monthly:
 	uv run python -m src.main monthly
 
-# カスタムプロンプトで検索
+# Run AI Agent for specific topic
+run-topic:
+	uv run python -m src.main topic $(TOPIC)
+
+# Run AI Agent with custom prompt
 run-custom:
 	uv run python -m src.main custom "$(PROMPT)"
 
