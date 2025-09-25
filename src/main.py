@@ -25,7 +25,9 @@ class AITechCatchupAgent:
 
     def __init__(self):
         self.claude_search = ClaudeSearch(
-            anthropic_api_key=settings.anthropic_api_key, model=settings.claude_model
+            anthropic_api_key=settings.anthropic_api_key,
+            model=settings.claude_model,
+            max_tokens=settings.max_tokens,
         )
         self.github_integration = GitHubIntegration(
             token=settings.github_token, repo=settings.github_repo
@@ -61,7 +63,7 @@ class AITechCatchupAgent:
             # 2. GitHub Issue作成（オプション）
             if create_issue:
                 logger.info("GitHub Issueを作成中...")
-                issue_result = self.github_integration.create_weekly_report_issue(
+                issue_result = self.github_integration.create_report_issue(
                     search_result["content"], model_name=self.claude_search.model
                 )
 
@@ -69,7 +71,7 @@ class AITechCatchupAgent:
                     logger.error(f"Issue作成エラー: {issue_result['error']}")
                     return {"status": "error", "message": issue_result["error"]}
 
-                logger.info(f"週間レポートIssueを作成しました: {issue_result.get('html_url', '')}")
+                logger.info(f"レポートIssueを作成しました: {issue_result.get('html_url', '')}")
                 result["issue_url"] = issue_result.get("html_url", "")
             else:
                 logger.info("GitHub Issue作成をスキップしました")
@@ -98,7 +100,7 @@ class AITechCatchupAgent:
 
             # GitHub Issue作成（オプション）
             if create_issue:
-                issue_result = self.github_integration.create_tech_insight_issue(
+                issue_result = self.github_integration.create_insight_issue(
                     title=f"{topic}に関する最新動向",
                     content=search_result["content"],
                     category="Tech Insight",
@@ -149,7 +151,7 @@ def main():
             if result["status"] == "success" and not no_issue:
                 # GitHub Issue作成
                 issue_result = agent.github_integration.create_issue(
-                    title=f"週次AI技術レポート - {datetime.now().strftime('%Y年%m月%d日')}",
+                    title=f"AI Tech Catchup Weekly Report - {datetime.now().strftime('%Y-%m-%d')}",
                     body=result["content"],
                     model_name=agent.claude_search.model,
                 )
@@ -160,7 +162,7 @@ def main():
             if result["status"] == "success" and not no_issue:
                 # GitHub Issue作成
                 issue_result = agent.github_integration.create_issue(
-                    title=f"月次AI技術サマリー - {datetime.now().strftime('%Y年%m月')}",
+                    title=f"AI Tech Catchup Monthly Report - {datetime.now().strftime('%Y-%m')}",
                     body=result["content"],
                     model_name=agent.claude_search.model,
                 )

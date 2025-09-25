@@ -18,11 +18,13 @@ class ClaudeSearch:
     def __init__(
         self,
         anthropic_api_key: str,
-        model: str = "claude-3-5-sonnet-20241022",
+        model: str,
+        max_tokens: int,
         prompts_dir: str = "prompts",
     ):
         self.anthropic_api_key = anthropic_api_key
         self.model = model
+        self.max_tokens = max_tokens
         self.prompt_manager = PromptManager(prompts_dir)
 
     def search_latest_ai_news(
@@ -53,17 +55,15 @@ class ClaudeSearch:
             # Claude APIにリクエスト
             response = client.messages.create(
                 model=self.model,
-                max_tokens=4000,
+                max_tokens=self.max_tokens,
                 messages=[{"role": "user", "content": prompt}],
             )
-
             result = {
                 "status": "success",
                 "content": response.content[0].text,
                 "searched_at": datetime.now().isoformat(),
                 "model": self.model,
             }
-
             logger.info("Claude Code検索が正常に完了しました")
             return result
 

@@ -1,4 +1,4 @@
-name: AI Tech Weekly Catchup Agent
+name: AI Tech Catchup Agent
 
 on:
   workflow_dispatch:
@@ -39,7 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
-          make run-weekly
+          make run
 
       - name: Create summary
         if: always()

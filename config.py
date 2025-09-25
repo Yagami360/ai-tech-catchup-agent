@@ -3,8 +3,10 @@ AI Tech Catchup Agent の設定ファイル
 """
 import os
 from typing import Any, Dict, List
-
+import logging
 from pydantic_settings import BaseSettings
+
+logger = logging.getLogger(__name__)
 
 
 class Settings(BaseSettings):
@@ -22,15 +24,15 @@ class Settings(BaseSettings):
     report_language: str = "ja"  # ja, en
 
     # Claude設定
-    claude_model: str = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514")
-    max_tokens: int = os.getenv("MAX_TOKENS", 100000)
+    claude_model: str = os.getenv("CLAUDE_MODEL", "")
+    max_tokens: int = int(os.getenv("MAX_TOKENS", "10000"))
 
     # レポート詳細設定
-    news_count: int = os.getenv("NEWS_COUNT", 10)
+    news_count: int = os.getenv("NEWS_COUNT", 20)
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 
 
 # グローバル設定インスタンス
 settings = Settings()
-print("settings: ", settings)
+logger.debug("settings: ", settings)

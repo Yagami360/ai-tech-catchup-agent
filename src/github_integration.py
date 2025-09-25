@@ -97,15 +97,15 @@ class GitHubIntegration:
             logger.error(f"Issue作成に失敗: {e}")
             return {"error": str(e)}
 
-    def create_weekly_report_issue(
+    def create_report_issue(
         self, report_content: str, model_name: Optional[str] = None
     ) -> Dict[str, Any]:
-        """週間レポートのIssueを作成"""
+        """レポートのIssueを作成"""
         today = datetime.now().strftime("%Y-%m-%d")
-        title = f"🤖 AI Tech Catchup Weekly Report - {today}"
+        title = f"🤖 AI Tech Catchup Report - {today}"
 
         # Issue本文をフォーマット
-        body = f"""# 🤖 AI Tech Catchup Weekly Report
+        body = f"""# 🤖 AI Tech Catchup Report
 
 - レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
 - 使用モデル: `{model_name}`
@@ -131,10 +131,10 @@ class GitHubIntegration:
             model_name=model_name,
         )
 
-    def create_tech_insight_issue(
+    def create_insight_issue(
         self, title: str, content: str, category: str, model_name: Optional[str] = None
     ) -> Dict[str, Any]:
-        """技術インサイトのIssueを作成"""
+        """インサイトのIssueを作成"""
         issue_title = f"🔍 {category}: {title}"
 
         body = f"""# {category}: {title}
