@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     report_language: str = "ja"  # ja, en
 
     # Claude設定
-    claude_model: str = os.getenv("CLAUDE_MODEL", "")
+    claude_model: str = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514")
     max_tokens: int = int(os.getenv("MAX_TOKENS", "10000"))
 
     # レポート詳細設定
