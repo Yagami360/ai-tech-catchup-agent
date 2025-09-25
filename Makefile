@@ -10,8 +10,10 @@ update:
 
 # Setup development environment
 setup: install
-	cp .env.example .env
-	@echo "Created environment configuration file. Please edit the .env file to set the API keys."
+	if [ ! -f .env ]; then
+		cp .env.example .env
+		@echo "Created environment configuration file. Please edit the .env file to set the API keys."
+	fi
 
 # Run AI Agent on local environment
 run:
@@ -49,3 +51,10 @@ lint:
 # Run code formatting
 format:
 	uv run black .
+
+# Claude Code Actions workflow commands
+# workflow-dispatch:
+# 	gh workflow run claude-code-actions.yml
+
+# workflow-status:
+# 	gh run list --workflow=claude-code-actions.yml --limit=5

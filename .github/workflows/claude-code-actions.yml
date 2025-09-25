@@ -10,55 +10,43 @@ jobs:
   ai-tech-catchup-claude-code:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
+      pull-requests: write
       issues: write
-      pull-requests: read
+      id-token: write
+      actions: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
-      - name: Set up Claude Code
-        uses: anthropic/claude-code-action@v1
+      - name: Run Claude Code
+        id: claude
+        uses: anthropics/claude-code-action@v1
         with:
-          claude_token: ${{ secrets.CLAUDE_TOKEN }}
-          working_directory: '.'
-          model: 'claude-3-5-sonnet-20241022'
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: |
+            --system-prompt "AI Tech Catchup Agentとして動作してください。
 
-      - name: Run AI Tech Catchup (make run equivalent)
-        run: |
-          echo "🤖 AI Tech Catchup Agent - Claude Code Actions"
-          echo "=============================================="
-          echo "📊 最新AI技術動向レポートを生成中..."
+            以下の手順でレポートを作成してください：
+            1. prompts/default.yaml の default_search プロンプトを参照
+            2. そのプロンプトの内容に従ってWeb検索機能を活用
+            3. プロンプトで指定された形式でレポートを作成
 
-          claude-code run --prompt "
-          AI Tech Catchup Agent の最新AI技術動向レポートを生成してください。
+            必ず日本語で回答し、具体的で検証可能な情報を提供してください。"
 
-          ## 実行条件
-          - 現在の日付: $(date '+%Y年%m月%d日')
-          - 言語: 日本語
-
-          ## プロンプトファイルを参照
-          prompts/default.yaml の default_search セクションのプロンプトを使用して、
-          Web検索機能を活用して最新のAI技術動向レポートを作成してください。
-
-          ## 出力形式
-          - 詳細なレポート内容
-          - 各情報源のURL
-          - 具体的な事例と数値データ
-          - 開発者向けポイント
-          - AI研究者向けポイント
-          - SNS・コミュニティ動向
-          - OSS動向
-          "
-
-      - name: Create GitHub Issue
+      - name: Create GitHub Issue with Claude Response
         run: |
           echo "📝 GitHub Issueを作成中..."
 
           # Claude Codeの出力を取得
-          REPORT_CONTENT=$(cat claude-code-output.md 2>/dev/null || echo "レポートの生成に失敗しました")
+          if [ -f "claude_output.md" ]; then
+            REPORT_CONTENT=$(cat claude_output.md)
+          else
+            # フォールバック: エラーメッセージ
+            REPORT_CONTENT="Claude Codeの実行結果を取得できませんでした。ワークフローの実行を確認してください。"
+          fi
 
           # Issueのタイトルを生成
           TITLE="🤖 AI Tech Catchup Report - $(date '+%Y-%m-%d')"
