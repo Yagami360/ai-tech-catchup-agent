@@ -1,10 +1,19 @@
 name: AI Tech Catchup Agent with Claude Code Actions
 
 on:
-  workflow_dispatch:
-  schedule:
-    # 毎週金曜日 9:00 (UTC)
-    - cron: '0 9 * * 5'
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+  pull_request_review:
+    types: [submitted]
+  # Unsupported workflow_dispatch and schedule on Claude Code Actions
+  # workflow_dispatch:
+  # schedule:
+  #   # 毎週金曜日 9:00 (UTC)
+  #   - cron: '0 9 * * 5'
 
 jobs:
   ai-tech-catchup-claude-code:
@@ -26,6 +35,11 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+          # Optional: Customize the trigger phrase (default: @claude)
+          trigger_phrase: "@ai-tech-catchup-agent"
+
+          # Optional: Configure Claude's behavior with CLI arguments
           claude_args: |
             --system-prompt "AI Tech Catchup Agentとして動作してください。
 
@@ -77,4 +91,3 @@ jobs:
           echo "- **リポジトリ**: ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
           echo "- **ワークフロー**: ${{ github.workflow }}" >> $GITHUB_STEP_SUMMARY
           echo "- **実行結果**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **使用モデル**: claude-3-5-sonnet-20241022" >> $GITHUB_STEP_SUMMARY
