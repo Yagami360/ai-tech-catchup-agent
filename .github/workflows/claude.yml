@@ -9,11 +9,6 @@ on:
     types: [opened, assigned]
   pull_request_review:
     types: [submitted]
-  # Unsupported workflow_dispatch and schedule on Claude Code Actions
-  # workflow_dispatch:
-  # schedule:
-  #   # 毎週金曜日 9:00 (UTC)
-  #   - cron: '0 9 * * 5'
 
 jobs:
   claude:
