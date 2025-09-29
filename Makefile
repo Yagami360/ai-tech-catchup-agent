@@ -1,4 +1,4 @@
-.PHONY: install update setup run run-news run-no-issue run-weekly run-monthly run-topic run-custom lint format
+.PHONY: install update setup run run-weekly run-monthly run-topic run-custom test lint format
 
 # Install dependencies
 install:
@@ -19,14 +19,6 @@ setup: install
 run:
 	uv run python -m src.main
 
-# Run AI Agent with custom news count
-run-news:
-	uv run python -m src.main --news-count $(NEWS_COUNT)
-
-# Run AI Agent without creating GitHub Issues
-run-no-issue:
-	uv run python -m src.main --no-issue
-
 # Run AI Agent for weekly report
 run-weekly:
 	uv run python -m src.main weekly
@@ -43,18 +35,24 @@ run-topic:
 run-custom:
 	uv run python -m src.main custom "$(PROMPT)"
 
+# Run AI Agent with test mode
+test:
+	export LOG_LEVEL=DEBUG
+	uv run python -m src.main --claude-model claude-3-5-haiku-20241022 --max-tokens 1000 --news-count 1 --no-issue
+
+test-weekly:
+	export LOG_LEVEL=DEBUG
+	uv run python -m src.main weekly --claude-model claude-3-5-haiku-20241022 --max-tokens 1000 --news-count 1 --no-issue
+
+test-monthly:
+	export LOG_LEVEL=DEBUG
+	uv run python -m src.main monthly --claude-model claude-3-5-haiku-20241022 --max-tokens 1000 --news-count 1 --no-issue
+
 # Run code linting
 lint:
-	uv run flake8 .
+	uv run flake8 . --exclude=.venv,venv,__pycache__,.git,.mypy_cache,.pytest_cache
 	uv run mypy .
 
 # Run code formatting
 format:
 	uv run black .
-
-# Claude Code Actions workflow commands
-# workflow-dispatch:
-# 	gh workflow run claude-code-actions.yml
-
-# workflow-status:
-# 	gh run list --workflow=claude-code-actions.yml --limit=5

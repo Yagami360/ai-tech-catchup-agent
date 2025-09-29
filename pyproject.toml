@@ -30,8 +30,12 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
 
+[tool.flake8]
+max-line-length = 150
+exclude = [".venv", "venv", "__pycache__", ".git", ".mypy_cache", ".pytest_cache"]
+
 [tool.black]
-line-length = 88
+line-length = 150
 target-version = ['py38', 'py39', 'py310', 'py311']
 
 [tool.mypy]

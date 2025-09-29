@@ -1,5 +1,5 @@
 """
-GitHub統合モジュール - Issue/PRの自動作成と管理
+GitHub Client - Issue/PRの自動作成と管理
 """
 import json
 import logging
@@ -11,8 +11,8 @@ import requests
 logger = logging.getLogger(__name__)
 
 
-class GitHubIntegration:
-    """GitHub統合クラス"""
+class GitHubClient:
+    """GitHubクライアントクラス"""
 
     def __init__(self, token: str, repo: str):
         self.token = token
@@ -63,9 +63,7 @@ class GitHubIntegration:
                 "labels": issue_labels,
             }
 
-            response = requests.post(
-                f"{self.base_url}/issues", headers=self.headers, data=json.dumps(data)
-            )
+            response = requests.post(f"{self.base_url}/issues", headers=self.headers, data=json.dumps(data))
 
             if response.status_code != 201:
                 error_detail = response.text
@@ -97,9 +95,7 @@ class GitHubIntegration:
             logger.error(f"Issue作成に失敗: {e}")
             return {"error": str(e)}
 
-    def create_report_issue(
-        self, report_content: str, model_name: Optional[str] = None
-    ) -> Dict[str, Any]:
+    def create_report_issue(self, report_content: str, model_name: Optional[str] = None) -> Dict[str, Any]:
         """レポートのIssueを作成"""
         today = datetime.now().strftime("%Y-%m-%d")
         title = f"🤖 AI Tech Catchup Report - {today}"
@@ -131,9 +127,7 @@ class GitHubIntegration:
             model_name=model_name,
         )
 
-    def create_insight_issue(
-        self, title: str, content: str, category: str, model_name: Optional[str] = None
-    ) -> Dict[str, Any]:
+    def create_insight_issue(self, title: str, content: str, category: str, model_name: Optional[str] = None) -> Dict[str, Any]:
         """インサイトのIssueを作成"""
         issue_title = f"🔍 {category}: {title}"
 

@@ -3,12 +3,10 @@ AI Tech Catchup Agent メインアプリケーション
 """
 import logging
 import sys
-from datetime import datetime
 from typing import Any, Dict
 
-from config import settings
-from .claude_search import ClaudeSearch
-from .github_integration import GitHubIntegration
+from .config import settings
+from .agent import AITechCatchupAgent
 
 # ログ設定
 logging.basicConfig(
@@ -20,106 +18,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-class AITechCatchupAgent:
-    """AI Tech Catchup Agent メインクラス"""
-
-    def __init__(self):
-        self.claude_search = ClaudeSearch(
-            anthropic_api_key=settings.anthropic_api_key,
-            model=settings.claude_model,
-            max_tokens=settings.max_tokens,
-        )
-        self.github_integration = GitHubIntegration(
-            token=settings.github_token, repo=settings.github_repo
-        )
-
-    def run_catchup(
-        self,
-        custom_prompt: str = None,
-        create_issue: bool = True,
-        news_count: int = None,
-    ) -> Dict[str, Any]:
-        """Claude Codeで最新AI情報をキャッチアップ"""
-        logger.info("Claude CodeでAI技術キャッチアップを開始...")
-
-        try:
-            # 1. Claude Codeで最新情報を検索
-            logger.info("Claude Codeで最新情報を検索中...")
-            logger.debug(f"カスタムプロンプト: {custom_prompt}")
-            search_result = self.claude_search.search_latest_ai_news(
-                custom_prompt, news_count=news_count or settings.news_count
-            )
-
-            if search_result["status"] != "success":
-                logger.error(f"Claude Code検索エラー: {search_result['message']}")
-                return {"status": "error", "message": search_result["message"]}
-
-            result = {
-                "status": "success",
-                "content": search_result["content"],
-                "searched_at": search_result["searched_at"],
-            }
-
-            # 2. GitHub Issue作成（オプション）
-            if create_issue:
-                logger.info("GitHub Issueを作成中...")
-                issue_result = self.github_integration.create_report_issue(
-                    search_result["content"], model_name=self.claude_search.model
-                )
-
-                if "error" in issue_result:
-                    logger.error(f"Issue作成エラー: {issue_result['error']}")
-                    return {"status": "error", "message": issue_result["error"]}
-
-                logger.info(f"レポートIssueを作成しました: {issue_result.get('html_url', '')}")
-                result["issue_url"] = issue_result.get("html_url", "")
-            else:
-                logger.info("GitHub Issue作成をスキップしました")
-
-            return result
-
-        except Exception as e:
-            logger.error(f"キャッチアップ実行中にエラー: {e}")
-            return {"status": "error", "message": str(e)}
-
-    def search_topic(self, topic: str, create_issue: bool = True) -> Dict[str, Any]:
-        """特定トピックについてClaude Codeで検索"""
-        logger.info(f"特定トピック検索を開始: {topic}")
-
-        try:
-            search_result = self.claude_search.search_specific_topic(topic)
-
-            if search_result["status"] != "success":
-                return {"status": "error", "message": search_result["message"]}
-
-            result = {
-                "status": "success",
-                "topic": topic,
-                "content": search_result["content"],
-            }
-
-            # GitHub Issue作成（オプション）
-            if create_issue:
-                issue_result = self.github_integration.create_insight_issue(
-                    title=f"{topic}に関する最新動向",
-                    content=search_result["content"],
-                    category="Tech Insight",
-                    model_name=self.claude_search.model,
-                )
-                result["issue_url"] = issue_result.get("html_url", "")
-            else:
-                logger.info("GitHub Issue作成をスキップしました")
-
-            return result
-
-        except Exception as e:
-            logger.error(f"トピック検索中にエラー: {e}")
-            return {"status": "error", "message": str(e)}
-
-
 def main():
     """メイン関数"""
-    agent = AITechCatchupAgent()
+    logger.info("Started AI Tech Catchup Agent")
+    logger.debug(f"settings: {settings}")
 
     # --no-issueフラグをチェック
     no_issue = "--no-issue" in sys.argv
@@ -140,6 +42,36 @@ def main():
             logger.error("--news-countには有効な数値を指定してください")
             sys.exit(1)
 
+    # --claude-modelオプションをチェック
+    claude_model = None
+    if "--claude-model" in sys.argv:
+        try:
+            index = sys.argv.index("--claude-model")
+            if index + 1 < len(sys.argv):
+                claude_model = sys.argv[index + 1]
+                # オプションと値を削除
+                sys.argv.pop(index)
+                sys.argv.pop(index)
+        except IndexError:
+            logger.error("--claude-modelには有効なモデル名を指定してください")
+            sys.exit(1)
+
+    # --max-tokensオプションをチェック
+    max_tokens = None
+    if "--max-tokens" in sys.argv:
+        try:
+            index = sys.argv.index("--max-tokens")
+            if index + 1 < len(sys.argv):
+                max_tokens = int(sys.argv[index + 1])
+                # オプションと値を削除
+                sys.argv.pop(index)
+                sys.argv.pop(index)
+        except (ValueError, IndexError):
+            logger.error("--max-tokensには有効な数値を指定してください")
+            sys.exit(1)
+
+    agent = AITechCatchupAgent(claude_model=claude_model, max_tokens=max_tokens)
+
     # コマンドライン引数で実行モードを指定
     if len(sys.argv) > 1:
         mode = sys.argv[1]
@@ -147,39 +79,21 @@ def main():
             topic = sys.argv[2] if len(sys.argv) > 2 else "大規模言語モデル"
             result = agent.search_topic(topic, create_issue=not no_issue)
         elif mode == "weekly":
-            result = agent.claude_search.search_weekly_report()
-            if result["status"] == "success" and not no_issue:
-                # GitHub Issue作成
-                issue_result = agent.github_integration.create_issue(
-                    title=f"AI Tech Catchup Weekly Report - {datetime.now().strftime('%Y-%m-%d')}",
-                    body=result["content"],
-                    model_name=agent.claude_search.model,
-                )
-                if issue_result.get("html_url"):
-                    result["issue_url"] = issue_result.get("html_url", "")
+            result = agent.weekly_report(create_issue=not no_issue)
         elif mode == "monthly":
-            result = agent.claude_search.search_monthly_summary()
-            if result["status"] == "success" and not no_issue:
-                # GitHub Issue作成
-                issue_result = agent.github_integration.create_issue(
-                    title=f"AI Tech Catchup Monthly Report - {datetime.now().strftime('%Y-%m')}",
-                    body=result["content"],
-                    model_name=agent.claude_search.model,
-                )
-                if issue_result.get("html_url"):
-                    result["issue_url"] = issue_result.get("html_url", "")
+            result = agent.monthly_report(create_issue=not no_issue)
         elif mode == "custom":
             prompt = " ".join(sys.argv[2:]) if len(sys.argv) > 2 else None
-            result = agent.run_catchup(
-                prompt, create_issue=not no_issue, news_count=news_count
-            )
+            result = agent.run_catchup(prompt, create_issue=not no_issue, news_count=news_count)
         else:
             print(
-                "使用法: python main.py [topic <topic>|weekly|monthly|custom <prompt>] [--no-issue] [--news-count N]"
+                "使用法: python main.py [topic <topic>|weekly|monthly|custom <prompt>] [--no-issue] [--news-count N] [--claude-model MODEL] [--max-tokens N]"
             )
             print("引数なしで実行するとデフォルトのキャッチアップを実行します")
             print("--no-issueフラグを指定するとGitHub Issueを作成しません")
-            print("--news-count N で重要ニュースの件数を指定できます（デフォルト: 10）")
+            print("--news-count N で重要ニュースの件数を指定できます（デフォルト: 20）")
+            print("--claude-model MODEL でClaudeモデルを指定できます（デフォルト: claude-sonnet-4-20250514）")
+            print("--max-tokens N で最大トークン数を指定できます（デフォルト: 10000）")
             sys.exit(1)
     else:
         # デフォルトでキャッチアップを実行
