@@ -6,7 +6,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional
 
-from ..client import ClaudeClient, GitHubClient
+from ..client import ClaudeCodeClient, GitHubClient
 from ..config import settings
 from ..utils import PromptManager
 
@@ -17,13 +17,9 @@ class AITechCatchupAgent:
     """AI Tech Catchup Agent メインクラス"""
 
     def __init__(self, claude_model: Optional[str] = None, max_tokens: Optional[int] = None, prompts_dir: str = "prompts"):
-        model = claude_model or settings.claude_model
-        tokens = max_tokens or settings.max_tokens
-        self.claude_client = ClaudeClient(
-            anthropic_api_key=settings.anthropic_api_key,
-            model=model,
-            max_tokens=tokens,
-        )
+        self.claude_model = claude_model or settings.claude_model
+        self.max_tokens = max_tokens or settings.max_tokens
+        self.claude_client = ClaudeCodeClient(model=self.claude_model)
         self.github_client = GitHubClient(token=settings.github_token, repo=settings.github_repo)
         self.prompt_manager = PromptManager(prompts_dir)
 
@@ -43,8 +39,8 @@ class AITechCatchupAgent:
                 logger.error("デフォルト検索プロンプトを取得できませんでした")
                 return {"status": "error", "message": "プロンプトの取得に失敗しました"}
 
-            # 2. Claude APIで最新情報を検索
-            logger.info("Claude APIで最新情報を検索中...")
+            # 2. Claude Codeで最新情報を検索
+            logger.info("Claude Codeで最新情報を検索中...")
             logger.info(f"入力プロンプト: {prompt}")
             search_result = self.claude_client.send_message(prompt)
 
@@ -64,7 +60,7 @@ class AITechCatchupAgent:
                 issue_body = f"""# 🤖 AI Tech Catchup Report
 
 - レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
-- 使用モデル: `{self.claude_client.model}`
+- 使用モデル: `{self.claude_model}`
 ---
 
 {search_result["content"]}
@@ -76,7 +72,7 @@ class AITechCatchupAgent:
                 issue_result = self.github_client.create_issue(
                     title=f"🤖 AI Tech Catchup Report - {datetime.now().strftime('%Y-%m-%d')}",
                     body=issue_body,
-                    labels=[self.claude_client.model],
+                    labels=["report", self.claude_client.model],
                 )
 
                 if "error" in issue_result:
@@ -105,7 +101,7 @@ class AITechCatchupAgent:
                 logger.error("週次レポートプロンプトを取得できませんでした")
                 return {"status": "error", "message": "プロンプトの取得に失敗しました"}
 
-            # Claude APIでレポート生成
+            # Claude Codeでレポート生成
             logger.info(f"入力プロンプト: {prompt}")
             search_result = self.claude_client.send_message(prompt)
 
@@ -132,7 +128,7 @@ class AITechCatchupAgent:
 
 - レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
 - 調査期間: `{week_period}`
-- 使用モデル: `{self.claude_client.model}`
+- 使用モデル: `{self.claude_model}`
 ---
 
 {search_result["content"]}
@@ -168,7 +164,7 @@ class AITechCatchupAgent:
                 logger.error("月次レポートプロンプトを取得できませんでした")
                 return {"status": "error", "message": "プロンプトの取得に失敗しました"}
 
-            # Claude APIでレポート生成
+            # Claude Codeでレポート生成
             logger.info(f"入力プロンプト: {prompt}")
             search_result = self.claude_client.send_message(prompt)
 
@@ -191,7 +187,7 @@ class AITechCatchupAgent:
 
 - レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
 - 調査期間: `{month_period}`
-- 使用モデル: `{self.claude_client.model}`
+- 使用モデル: `{self.claude_model}`
 ---
 
 {search_result["content"]}

@@ -30,11 +30,11 @@ run-monthly:
 # Run AI Agent with test mode
 test:
 	@echo "Running report test..."
-	uv run python -m src.main --claude-model claude-3-5-haiku-20241022 --max-tokens 10 --news-count 1 --no-issue
+	uv run python -m src.main --claude-model claude-3-5-haiku-20241022 --max-tokens 50 --news-count 1 --no-issue
 	@echo "Running weekly report test..."
-	uv run python -m src.main weekly --claude-model claude-3-5-haiku-20241022 --max-tokens 10 --news-count 1 --no-issue
+	uv run python -m src.main weekly --claude-model claude-3-5-haiku-20241022 --max-tokens 50 --news-count 1 --no-issue
 	@echo "Running monthly report test..."
-	uv run python -m src.main monthly --claude-model claude-3-5-haiku-20241022 --max-tokens 10 --news-count 1 --no-issue
+	uv run python -m src.main monthly --claude-model claude-3-5-haiku-20241022 --max-tokens 50 --news-count 1 --no-issue
 
 # Run code linting
 lint:

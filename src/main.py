@@ -80,12 +80,13 @@ def main() -> None:
         elif mode == "monthly":
             result = agent.monthly_report(create_issue=not no_issue)
         else:
-            print("使用法: python main.py [weekly|monthly] " "[--no-issue] [--news-count N] [--claude-model MODEL] [--max-tokens N]")
+            print("使用法: python main.py [weekly|monthly] [--no-issue] [--news-count N] [--claude-model MODEL] [--max-tokens N]")
             print("引数なしで実行するとデフォルトのキャッチアップを実行します")
             print("--no-issueフラグを指定するとGitHub Issueを作成しません")
             print("--news-count N で重要ニュースの件数を指定できます（デフォルト: 20）")
             print("--claude-model MODEL でClaudeモデルを指定できます（デフォルト: claude-sonnet-4-20250514）")
             print("--max-tokens N で最大トークン数を指定できます（デフォルト: 10000）")
+            print("常にClaude Codeを使用します（Web Search機能付き）")
             sys.exit(1)
     else:
         # デフォルトでキャッチアップを実行
