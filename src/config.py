@@ -17,10 +17,7 @@ class Settings(BaseSettings):
 
     # GitHub設定
     github_token: str = os.getenv("GITHUB_TOKEN", "")
-    github_repo: str = os.getenv(
-        "GITHUB_REPOSITORY",
-        "Yagami360/ai-tech-catchup-agent"
-    )
+    github_repo: str = os.getenv("GITHUB_REPOSITORY", "Yagami360/ai-tech-catchup-agent")
 
     # レポート設定
     report_frequency: str = "weekly"  # daily, weekly, monthly
