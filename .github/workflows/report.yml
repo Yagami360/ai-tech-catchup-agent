@@ -1,10 +1,10 @@
-name: AI Tech Catchup Agent
+name: Report by AI Tech Catchup Agent
 
 on:
   workflow_dispatch:
-  schedule:
-    # 毎週金曜日 9:00 (UTC)
-    - cron: '0 9 * * 5'
+  # schedule:
+  #   # 毎週金曜日 9:00 (UTC)
+  #   - cron: '0 9 * * 5'
 
 jobs:
   ai-tech-catchup:
