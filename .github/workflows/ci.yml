@@ -8,10 +8,12 @@ permissions:
 on:
   pull_request:
     branches:
+      - main
       - master
     types: [opened, synchronize, closed]
   push:
     branches:
+      - main
       - master
   workflow_dispatch:
 
@@ -41,6 +43,9 @@ jobs:
 
       - name: Run linting
         run: make lint
+
+      - name: Run code formatting check
+        run: make format-check
 
       - name: Run tests
         run: make test

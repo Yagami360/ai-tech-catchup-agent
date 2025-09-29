@@ -1,6 +1,7 @@
 """
 Claude Client - Claude APIとの通信を行うクライアント
 """
+
 import logging
 from datetime import datetime
 from typing import Any, Dict
@@ -33,6 +34,14 @@ class ClaudeClient:
                 max_tokens=self.max_tokens,
                 messages=[{"role": "user", "content": message}],
             )
+
+            # response.content[0]はTextBlockであることを確認
+            if not response.content or not hasattr(response.content[0], "text"):
+                return {
+                    "status": "error",
+                    "message": "Invalid response format from Claude API",
+                    "searched_at": datetime.now().isoformat(),
+                }
 
             result = {
                 "status": "success",

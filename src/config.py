@@ -1,6 +1,7 @@
 """
 AI Tech Catchup Agent の設定ファイル
 """
+
 import logging
 import os
 
@@ -28,7 +29,7 @@ class Settings(BaseSettings):
     max_tokens: int = int(os.getenv("MAX_TOKENS", "10000"))
 
     # レポート詳細設定
-    news_count: int = os.getenv("NEWS_COUNT", 20)
+    news_count: int = int(os.getenv("NEWS_COUNT", "20"))
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 

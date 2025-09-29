@@ -3,6 +3,7 @@
 *.pyc
 *.log
 .env
+.mypy_cache/
 
 .old/
 .debug/

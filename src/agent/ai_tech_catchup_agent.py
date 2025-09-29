@@ -1,8 +1,9 @@
 """
 AI Tech Catchup Agent メインクラス
 """
+
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from ..client import ClaudeClient, GitHubClient
 from ..config import settings
@@ -14,7 +15,7 @@ logger = logging.getLogger(__name__)
 class AITechCatchupAgent:
     """AI Tech Catchup Agent メインクラス"""
 
-    def __init__(self, claude_model: str = None, max_tokens: int = None, prompts_dir: str = "prompts"):
+    def __init__(self, claude_model: Optional[str] = None, max_tokens: Optional[int] = None, prompts_dir: str = "prompts"):
         model = claude_model or settings.claude_model
         tokens = max_tokens or settings.max_tokens
         self.claude_client = ClaudeClient(
@@ -27,9 +28,9 @@ class AITechCatchupAgent:
 
     def run_catchup(
         self,
-        custom_prompt: str = None,
+        custom_prompt: Optional[str] = None,
         create_issue: bool = True,
-        news_count: int = None,
+        news_count: Optional[int] = None,
     ) -> Dict[str, Any]:
         """Claude Codeで最新AI情報をキャッチアップ"""
         logger.info("Claude CodeでAI技術キャッチアップを開始...")

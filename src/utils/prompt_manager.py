@@ -1,6 +1,7 @@
 """
 プロンプト管理モジュール - YAMLファイルからプロンプトを読み込み・管理
 """
+
 import logging
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -52,7 +53,7 @@ class PromptManager:
             logger.error(f"プロンプトディレクトリの読み込みエラー: {e}")
             return {}
 
-    def get_prompt(self, prompt_type: str, **kwargs) -> Optional[str]:
+    def get_prompt(self, prompt_type: str, **kwargs: Any) -> Optional[str]:
         """指定されたタイプのプロンプトを取得"""
         if prompt_type not in self.prompts:
             logger.warning(f"プロンプトタイプが見つかりません: {prompt_type}")
@@ -101,10 +102,11 @@ class PromptManager:
             # テンプレートプロンプト（変数置換あり）
             template = prompt_config["template"]
             try:
-                return template.format(**kwargs)
+                formatted: str = template.format(**kwargs)
+                return formatted
             except KeyError as e:
                 logger.error(f"テンプレート変数の置換エラー: {e}")
-                return template
+                return str(template)
         elif "prompt" in prompt_config:
             # 固定プロンプト
             prompt_text = prompt_config["prompt"]
@@ -123,7 +125,7 @@ class PromptManager:
             # 月間期間が含まれている場合は置換
             if "{month_period}" in prompt_text and "month_period" in kwargs:
                 prompt_text = prompt_text.replace("{month_period}", kwargs["month_period"])
-            return prompt_text
+            return str(prompt_text)
         else:
             logger.error(f"プロンプト設定が無効です: {prompt_type}")
             return None
@@ -156,8 +158,8 @@ class PromptManager:
 
     def validate_prompts(self) -> Dict[str, list]:
         """プロンプトファイルの妥当性を検証"""
-        errors = []
-        warnings = []
+        errors: list[str] = []
+        warnings: list[str] = []
 
         if not self.prompts:
             errors.append("プロンプトが読み込まれていません")
@@ -190,7 +192,8 @@ class PromptManager:
 
         key_words_config = self.prompts["key_words"]
         if "keywords" in key_words_config:
-            return key_words_config["keywords"]
+            keywords = key_words_config["keywords"]
+            return str(keywords) if isinstance(keywords, str) else keywords
 
         logger.warning("key_wordsのkeywordsが見つかりません")
         return None

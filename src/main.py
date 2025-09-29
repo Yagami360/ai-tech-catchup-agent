@@ -1,6 +1,7 @@
 """
 AI Tech Catchup Agent メインアプリケーション
 """
+
 import logging
 import sys
 
@@ -17,7 +18,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def main():
+def main() -> None:
     """メイン関数"""
     logger.info("Started AI Tech Catchup Agent")
     logger.debug(f"settings: {settings}")

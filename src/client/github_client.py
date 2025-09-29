@@ -1,6 +1,7 @@
 """
 GitHub Client - Issue/PRの自動作成と管理
 """
+
 import json
 import logging
 from datetime import datetime
@@ -80,14 +81,14 @@ class GitHubClient:
                         data=json.dumps(data_without_labels),
                     )
                     if retry_response.status_code == 201:
-                        retry_data = retry_response.json()
+                        retry_data: Dict[str, Any] = retry_response.json()
                         logger.info(f"ラベルなしでIssue作成成功: {retry_data['html_url']}")
                         return retry_data
 
                 return {"error": f"{response.status_code}: {error_detail}"}
 
             response.raise_for_status()
-            issue_data = response.json()
+            issue_data: Dict[str, Any] = response.json()
             logger.info(f"Issue created: {issue_data['html_url']}")
             return issue_data
 
@@ -169,7 +170,8 @@ class GitHubClient:
             )
             response.raise_for_status()
 
-            return response.json()
+            result: Dict[str, Any] = response.json()
+            return result
 
         except Exception as e:
             logger.error(f"Issue更新に失敗: {e}")
