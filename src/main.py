@@ -3,10 +3,9 @@ AI Tech Catchup Agent メインアプリケーション
 """
 import logging
 import sys
-from typing import Any, Dict
 
-from .config import settings
 from .agent import AITechCatchupAgent
+from .config import settings
 
 # ログ設定
 logging.basicConfig(
@@ -87,7 +86,8 @@ def main():
             result = agent.run_catchup(prompt, create_issue=not no_issue, news_count=news_count)
         else:
             print(
-                "使用法: python main.py [topic <topic>|weekly|monthly|custom <prompt>] [--no-issue] [--news-count N] [--claude-model MODEL] [--max-tokens N]"
+                "使用法: python main.py [topic <topic>|weekly|monthly|custom <prompt>] "
+                "[--no-issue] [--news-count N] [--claude-model MODEL] [--max-tokens N]"
             )
             print("引数なしで実行するとデフォルトのキャッチアップを実行します")
             print("--no-issueフラグを指定するとGitHub Issueを作成しません")

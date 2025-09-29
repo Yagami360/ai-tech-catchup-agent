@@ -1,9 +1,9 @@
 """
 AI Tech Catchup Agent の設定ファイル
 """
-import os
-from typing import Any, Dict, List
 import logging
+import os
+
 from pydantic_settings import BaseSettings
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,10 @@ class Settings(BaseSettings):
 
     # GitHub設定
     github_token: str = os.getenv("GITHUB_TOKEN", "")
-    github_repo: str = os.getenv("GITHUB_REPOSITORY", "Yagami360/ai-tech-catchup-agent")
+    github_repo: str = os.getenv(
+        "GITHUB_REPOSITORY",
+        "Yagami360/ai-tech-catchup-agent"
+    )
 
     # レポート設定
     report_frequency: str = "weekly"  # daily, weekly, monthly

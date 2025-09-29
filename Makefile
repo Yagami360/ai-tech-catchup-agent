@@ -1,4 +1,4 @@
-.PHONY: install update setup run run-weekly run-monthly run-topic run-custom test lint format
+.PHONY: install update setup run run-weekly run-monthly run-topic run-custom test lint format format-check
 
 # Install dependencies
 install:
@@ -37,22 +37,24 @@ run-custom:
 
 # Run AI Agent with test mode
 test:
-	export LOG_LEVEL=DEBUG
-	uv run python -m src.main --claude-model claude-3-5-haiku-20241022 --max-tokens 1000 --news-count 1 --no-issue
-
-test-weekly:
-	export LOG_LEVEL=DEBUG
-	uv run python -m src.main weekly --claude-model claude-3-5-haiku-20241022 --max-tokens 1000 --news-count 1 --no-issue
-
-test-monthly:
-	export LOG_LEVEL=DEBUG
-	uv run python -m src.main monthly --claude-model claude-3-5-haiku-20241022 --max-tokens 1000 --news-count 1 --no-issue
+	@echo "Running report test..."
+	uv run python -m src.main --claude-model claude-3-5-haiku-20241022 --max-tokens 100 --news-count 1 --no-issue
+	@echo "Running weekly report test..."
+	uv run python -m src.main weekly --claude-model claude-3-5-haiku-20241022 --max-tokens 100 --news-count 1 --no-issue
+	@echo "Running monthly report test..."
+	uv run python -m src.main monthly --claude-model claude-3-5-haiku-20241022 --max-tokens 100 --news-count 1 --no-issue
 
 # Run code linting
 lint:
-	uv run flake8 . --exclude=.venv,venv,__pycache__,.git,.mypy_cache,.pytest_cache
+	uv run flake8 . --exclude=.venv,venv,__pycache__,.git,.mypy_cache,.pytest_cache --max-line-length=150
 	uv run mypy .
 
 # Run code formatting
 format:
 	uv run black .
+	uv run isort .
+
+# Run code formatting check
+format-check:
+	uv run black --check .
+	uv run isort --check-only .

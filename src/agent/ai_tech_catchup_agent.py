@@ -4,8 +4,8 @@ AI Tech Catchup Agent メインクラス
 import logging
 from typing import Any, Dict
 
-from ..config import settings
 from ..client import ClaudeClient, GitHubClient
+from ..config import settings
 from ..utils import PromptManager
 
 logger = logging.getLogger(__name__)
