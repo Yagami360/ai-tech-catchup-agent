@@ -75,21 +75,12 @@ def main() -> None:
     # コマンドライン引数で実行モードを指定
     if len(sys.argv) > 1:
         mode = sys.argv[1]
-        if mode == "topic":
-            topic = sys.argv[2] if len(sys.argv) > 2 else "大規模言語モデル"
-            result = agent.search_topic(topic, create_issue=not no_issue)
-        elif mode == "weekly":
+        if mode == "weekly":
             result = agent.weekly_report(create_issue=not no_issue)
         elif mode == "monthly":
             result = agent.monthly_report(create_issue=not no_issue)
-        elif mode == "custom":
-            prompt = " ".join(sys.argv[2:]) if len(sys.argv) > 2 else None
-            result = agent.run_catchup(prompt, create_issue=not no_issue, news_count=news_count)
         else:
-            print(
-                "使用法: python main.py [topic <topic>|weekly|monthly|custom <prompt>] "
-                "[--no-issue] [--news-count N] [--claude-model MODEL] [--max-tokens N]"
-            )
+            print("使用法: python main.py [weekly|monthly] " "[--no-issue] [--news-count N] [--claude-model MODEL] [--max-tokens N]")
             print("引数なしで実行するとデフォルトのキャッチアップを実行します")
             print("--no-issueフラグを指定するとGitHub Issueを作成しません")
             print("--news-count N で重要ニュースの件数を指定できます（デフォルト: 20）")

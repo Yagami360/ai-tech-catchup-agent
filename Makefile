@@ -1,4 +1,4 @@
-.PHONY: install update setup run run-weekly run-monthly run-topic run-custom test lint format format-check
+.PHONY: install update setup run run-weekly run-monthly test lint format format-check
 
 # Install dependencies
 install:
@@ -27,22 +27,14 @@ run-weekly:
 run-monthly:
 	uv run python -m src.main monthly
 
-# Run AI Agent for specific topic
-run-topic:
-	uv run python -m src.main topic $(TOPIC)
-
-# Run AI Agent with custom prompt
-run-custom:
-	uv run python -m src.main custom "$(PROMPT)"
-
 # Run AI Agent with test mode
 test:
 	@echo "Running report test..."
-	uv run python -m src.main --claude-model claude-3-5-haiku-20241022 --max-tokens 100 --news-count 1 --no-issue
+	uv run python -m src.main --claude-model claude-3-5-haiku-20241022 --max-tokens 10 --news-count 1 --no-issue
 	@echo "Running weekly report test..."
-	uv run python -m src.main weekly --claude-model claude-3-5-haiku-20241022 --max-tokens 100 --news-count 1 --no-issue
+	uv run python -m src.main weekly --claude-model claude-3-5-haiku-20241022 --max-tokens 10 --news-count 1 --no-issue
 	@echo "Running monthly report test..."
-	uv run python -m src.main monthly --claude-model claude-3-5-haiku-20241022 --max-tokens 100 --news-count 1 --no-issue
+	uv run python -m src.main monthly --claude-model claude-3-5-haiku-20241022 --max-tokens 10 --news-count 1 --no-issue
 
 # Run code linting
 lint:

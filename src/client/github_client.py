@@ -128,36 +128,6 @@ class GitHubClient:
             model_name=model_name,
         )
 
-    def create_insight_issue(self, title: str, content: str, category: str, model_name: Optional[str] = None) -> Dict[str, Any]:
-        """インサイトのIssueを作成"""
-        issue_title = f"🔍 {category}: {title}"
-
-        body = f"""# {category}: {title}
-
-- レポート日時: `{datetime.now().strftime("%Y年%m月%d日 %H:%M")}`
-- 使用モデル: `{model_name}`
----
-
-{content}
-
----
-
-*このインサイトは AI Tech Catchup Agent によって自動生成されました。*
-"""
-
-        # ラベルにモデル名を追加
-        labels = ["tech-insight", category.lower()]
-        if model_name:
-            model_label = self._format_model_label(model_name)
-            labels.append(model_label)
-
-        return self.create_issue(
-            title=issue_title,
-            body=body,
-            labels=labels,
-            model_name=model_name,
-        )
-
     def update_issue(self, issue_number: int, body: str) -> Dict[str, Any]:
         """Issueを更新"""
         try:
