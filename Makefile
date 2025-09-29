@@ -2,7 +2,7 @@
 
 # Install dependencies
 install:
-	uv sync
+	uv sync --extra dev
 
 # Update dependencies
 update:
