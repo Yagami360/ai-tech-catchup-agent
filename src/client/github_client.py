@@ -4,7 +4,6 @@ GitHub Client - Issue/PRの自動作成と管理
 
 import json
 import logging
-from datetime import datetime
 from typing import Any, Dict, Optional
 
 import requests
@@ -25,43 +24,18 @@ class GitHubClient:
         }
         self.base_url = f"https://api.github.com/repos/{repo}"
 
-    def _format_model_label(self, model_name: str) -> str:
-        """モデル名をラベル用にフォーマット"""
-        # ラベル名の最大長（GitHubの制限を考慮）
-        max_label_length = 50
-        prefix = "model:"
-
-        # プレフィックス + モデル名の長さをチェック
-        full_label = f"{prefix}{model_name}"
-
-        if len(full_label) <= max_label_length:
-            return full_label
-        else:
-            # 文字数オーバーの場合は先頭から切り取り
-            available_length = max_label_length - len(prefix)
-            truncated_model = model_name[:available_length]
-            return f"{prefix}{truncated_model}"
-
     def create_issue(
         self,
         title: str,
         body: str,
         labels: Optional[list] = None,
-        model_name: Optional[str] = None,
     ) -> Dict[str, Any]:
         """GitHub Issueを作成"""
         try:
-            # ラベルにモデル名を追加
-            issue_labels = labels or []
-            if model_name:
-                # モデル名からラベル用の短縮形を作成
-                model_label = self._format_model_label(model_name)
-                issue_labels.append(model_label)
-
             data = {
                 "title": title,
                 "body": body,
-                "labels": issue_labels,
+                "labels": labels or [],
             }
 
             response = requests.post(f"{self.base_url}/issues", headers=self.headers, data=json.dumps(data))
@@ -95,38 +69,6 @@ class GitHubClient:
         except Exception as e:
             logger.error(f"Issue作成に失敗: {e}")
             return {"error": str(e)}
-
-    def create_report_issue(self, report_content: str, model_name: Optional[str] = None) -> Dict[str, Any]:
-        """レポートのIssueを作成"""
-        today = datetime.now().strftime("%Y-%m-%d")
-        title = f"🤖 AI Tech Catchup Report - {today}"
-
-        # Issue本文をフォーマット
-        body = f"""# 🤖 AI Tech Catchup Report
-
-- レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
-- 使用モデル: `{model_name}`
----
-
-{report_content}
-
----
-
-*このレポートは AI Tech Catchup Agent によって自動生成されました。*
-"""
-
-        # ラベルにモデル名を追加
-        labels = ["weekly-report"]
-        if model_name:
-            model_label = self._format_model_label(model_name)
-            labels.append(model_label)
-
-        return self.create_issue(
-            title=title,
-            body=body,
-            labels=labels,
-            model_name=model_name,
-        )
 
     def update_issue(self, issue_number: int, body: str) -> Dict[str, Any]:
         """Issueを更新"""

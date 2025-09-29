@@ -3,6 +3,7 @@ AI Tech Catchup Agent メインクラス
 """
 
 import logging
+from datetime import datetime, timedelta
 from typing import Any, Dict, Optional
 
 from ..client import ClaudeClient, GitHubClient
@@ -57,6 +58,7 @@ class AITechCatchupAgent:
 
             # 2. Claude APIで最新情報を検索
             logger.info("Claude APIで最新情報を検索中...")
+            logger.info(f"入力プロンプト: {prompt}")
             search_result = self.claude_client.send_message(prompt)
 
             if search_result["status"] != "success":
@@ -72,7 +74,23 @@ class AITechCatchupAgent:
             # 2. GitHub Issue作成（オプション）
             if create_issue:
                 logger.info("GitHub Issueを作成中...")
-                issue_result = self.github_client.create_report_issue(search_result["content"], model_name=self.claude_client.model)
+                issue_body = f"""# 🤖 AI Tech Catchup Report
+
+- レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
+- 使用モデル: `{self.claude_client.model}`
+---
+
+{search_result["content"]}
+
+---
+
+*このレポートは AI Tech Catchup Agent によって自動生成されました。*
+"""
+                issue_result = self.github_client.create_issue(
+                    title=f"🤖 AI Tech Catchup Report - {datetime.now().strftime('%Y-%m-%d')}",
+                    body=issue_body,
+                    labels=[self.claude_client.model],
+                )
 
                 if "error" in issue_result:
                     logger.error(f"Issue作成エラー: {issue_result['error']}")
@@ -101,6 +119,7 @@ class AITechCatchupAgent:
                 return {"status": "error", "message": "プロンプトの取得に失敗しました"}
 
             # Claude APIでレポート生成
+            logger.info(f"入力プロンプト: {prompt}")
             search_result = self.claude_client.send_message(prompt)
 
             if search_result["status"] != "success":
@@ -114,12 +133,31 @@ class AITechCatchupAgent:
 
             # GitHub Issue作成（オプション）
             if create_issue:
-                from datetime import datetime
+                # 週次レポートの調査期間を計算
+                today = datetime.now()
+                week_ago = today - timedelta(days=7)
+                week_period = f"{week_ago.strftime('%Y-%m-%d')} ~ {today.strftime('%Y-%m-%d')}"
 
+                # 週番号を計算（月の第何週目か）
+                week_number = (today.day - 1) // 7 + 1
+                week_title = f"{today.strftime('%Y年%m月')}第{week_number}週"
+                issue_body = f"""# AI Tech Catchup Weekly Report
+
+- レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
+- 調査期間: `{week_period}`
+- 使用モデル: `{self.claude_client.model}`
+---
+
+{search_result["content"]}
+
+---
+
+*このレポートは AI Tech Catchup Agent によって自動生成されました。*
+"""
                 issue_result = self.github_client.create_issue(
-                    title=f"AI Tech Catchup Weekly Report - {datetime.now().strftime('%Y-%m-%d')}",
-                    body=search_result["content"],
-                    model_name=self.claude_client.model,
+                    title=f"AI Tech Catchup Weekly Report - {week_title}",
+                    body=issue_body,
+                    labels=["weekly-report", self.claude_client.model],
                 )
                 if issue_result.get("html_url"):
                     result["issue_url"] = issue_result.get("html_url", "")
@@ -144,6 +182,7 @@ class AITechCatchupAgent:
                 return {"status": "error", "message": "プロンプトの取得に失敗しました"}
 
             # Claude APIでレポート生成
+            logger.info(f"入力プロンプト: {prompt}")
             search_result = self.claude_client.send_message(prompt)
 
             if search_result["status"] != "success":
@@ -157,12 +196,27 @@ class AITechCatchupAgent:
 
             # GitHub Issue作成（オプション）
             if create_issue:
-                from datetime import datetime
+                # 月次レポートの調査期間を計算
+                today = datetime.now()
+                month_ago = today - timedelta(days=30)
+                month_period = f"{month_ago.strftime('%Y-%m-%d')} ~ {today.strftime('%Y-%m-%d')}"
+                issue_body = f"""# AI Tech Catchup Monthly Report
 
+- レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
+- 調査期間: `{month_period}`
+- 使用モデル: `{self.claude_client.model}`
+---
+
+{search_result["content"]}
+
+---
+
+*このレポートは AI Tech Catchup Agent によって自動生成されました。*
+"""
                 issue_result = self.github_client.create_issue(
-                    title=f"AI Tech Catchup Monthly Report - {datetime.now().strftime('%Y-%m')}",
-                    body=search_result["content"],
-                    model_name=self.claude_client.model,
+                    title=f"AI Tech Catchup Monthly Report - {datetime.now().strftime('%Y年%m月')}",
+                    body=issue_body,
+                    labels=["monthly-report", self.claude_client.model],
                 )
                 if issue_result.get("html_url"):
                     result["issue_url"] = issue_result.get("html_url", "")
