@@ -3,6 +3,7 @@
 """
 
 import logging
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -62,16 +63,18 @@ class PromptManager:
         prompt_config = self.prompts[prompt_type]
 
         # キーワードを動的に統合
-        if "key_words" in self.prompts and "key_words" in kwargs:
-            # key_wordsパラメータが渡された場合、key_wordsキーから取得
-            key_words_config = self.prompts["key_words"]
-            if "keywords" in key_words_config:
-                kwargs["key_words"] = key_words_config["keywords"]
-        elif "key_words" in self.prompts:
+        if "key_words" in self.prompts:
             # 自動的にkey_wordsを統合
             key_words_config = self.prompts["key_words"]
             if "keywords" in key_words_config:
                 kwargs["key_words"] = key_words_config["keywords"]
+
+        # key_urlsを動的に統合
+        if "key_urls" in self.prompts:
+            # 自動的にkey_urlsを統合
+            key_urls_config = self.prompts["key_urls"]
+            if "sources" in key_urls_config:
+                kwargs["key_urls"] = key_urls_config["sources"]
 
         # ニュース件数を動的に設定（デフォルト値: 10）
         if "news_count" not in kwargs:
@@ -79,21 +82,15 @@ class PromptManager:
 
         # 現在の年号を動的に設定
         if "current_year" not in kwargs:
-            from datetime import datetime
-
             kwargs["current_year"] = str(datetime.now().year)
 
         # 期間を動的に設定
         if "week_period" not in kwargs:
-            from datetime import datetime, timedelta
-
             today = datetime.now()
             week_ago = today - timedelta(days=7)
             kwargs["week_period"] = f"{week_ago.strftime('%Y年%m月%d日')}から{today.strftime('%Y年%m月%d日')}までの過去1週間"
 
         if "month_period" not in kwargs:
-            from datetime import datetime, timedelta
-
             today = datetime.now()
             month_ago = today - timedelta(days=30)
             kwargs["month_period"] = f"{month_ago.strftime('%Y年%m月%d日')}から{today.strftime('%Y年%m月%d日')}までの過去1ヶ月"
@@ -113,6 +110,9 @@ class PromptManager:
             # キーワードが含まれている場合は置換
             if "{key_words}" in prompt_text and "key_words" in kwargs:
                 prompt_text = prompt_text.replace("{key_words}", kwargs["key_words"])
+            # key_urlsが含まれている場合は置換
+            if "{key_urls}" in prompt_text and "key_urls" in kwargs:
+                prompt_text = prompt_text.replace("{key_urls}", kwargs["key_urls"])
             # ニュース件数が含まれている場合は置換
             if "{news_count}" in prompt_text and "news_count" in kwargs:
                 prompt_text = prompt_text.replace("{news_count}", kwargs["news_count"])

@@ -46,7 +46,7 @@ class GitHubClient:
                 logger.error(f"リクエストデータ: {json.dumps(data, ensure_ascii=False)}")
 
                 # 422エラーの場合、ラベルなしで再試行
-                if response.status_code == 422 and issue_labels:
+                if response.status_code == 422:
                     logger.info("ラベルなしでIssue作成を再試行します...")
                     data_without_labels = {"title": title, "body": body}
                     retry_response = requests.post(

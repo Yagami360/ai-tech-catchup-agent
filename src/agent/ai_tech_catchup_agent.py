@@ -29,7 +29,6 @@ class AITechCatchupAgent:
 
     def run_catchup(
         self,
-        custom_prompt: Optional[str] = None,
         create_issue: bool = True,
         news_count: Optional[int] = None,
     ) -> Dict[str, Any]:
@@ -39,22 +38,10 @@ class AITechCatchupAgent:
         try:
             # 1. プロンプトの準備
             logger.info("プロンプトを準備中...")
-            logger.debug(f"カスタムプロンプト: {custom_prompt}")
-
-            if not custom_prompt:
-                prompt = self.prompt_manager.get_prompt("default_report", news_count=str(news_count or settings.news_count))
-                if not prompt:
-                    logger.error("デフォルト検索プロンプトを取得できませんでした")
-                    return {"status": "error", "message": "プロンプトの取得に失敗しました"}
-            else:
-                prompt = self.prompt_manager.get_prompt(
-                    "custom_search",
-                    custom_prompt=custom_prompt,
-                    news_count=str(news_count or settings.news_count),
-                )
-                if not prompt:
-                    # フォールバック: カスタムプロンプトをそのまま使用
-                    prompt = custom_prompt
+            prompt = self.prompt_manager.get_prompt("default_report", news_count=str(news_count or settings.news_count))
+            if not prompt:
+                logger.error("デフォルト検索プロンプトを取得できませんでした")
+                return {"status": "error", "message": "プロンプトの取得に失敗しました"}
 
             # 2. Claude APIで最新情報を検索
             logger.info("Claude APIで最新情報を検索中...")

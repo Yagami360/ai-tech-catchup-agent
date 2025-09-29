@@ -29,48 +29,97 @@ key_words:
     - Twitter, X, LinkedIn, Reddit, SNS, Social Media
     - AI Community, AI Discussion, Tech Twitter
     - Open Source, OSS, GitHub, GitLab, Open Source AI
-    - Hugging Face, Transformers, Open Source Models, LeRobot
+    - Hugging Face, Transformers, Gradio, Open Source Models, LeRobot
     - Gartner, Gartner Hype Cycle
     - NEDO, New Energy and Industrial Technology Development Organization, 産業技術総合開発機構
+
+key_urls:
+  title: "主要情報取得先URL"
+  sources: |
+    - **AI企業公式サイト**: 
+      - OpenAI
+        - https://openai.com/blog
+        - https://openai.com/research
+      - Anthropic
+        - https://www.anthropic.com/news
+      - Google AI
+        - https://ai.google/research
+        - https://blog.google/technology/ai
+      - Microsoft
+        - https://blogs.microsoft.com/ai
+        - https://azure.microsoft.com/en-us/blog
+      - NVIDIA
+        - https://blogs.nvidia.com
+        - https://developer.nvidia.com/blog
+    - **技術ニュース**: 
+      - TechCrunch AI
+        - https://techcrunch.com/category/artificial-intelligence
+      - VentureBeat AI
+        - https://venturebeat.com/ai
+      - The Verge AI
+        - https://www.theverge.com/ai-artificial-intelligence
+      - Qiita
+        - https://qiita.com/
+        - https://qiita.com/trend
+      - GIGAZINE
+        - https://gigazine.net/
+    - **学術論文**: 
+      - arXiv最新論文
+        - https://arxiv.org/list/cs.AI/recent
+      - Papers with Code
+        - https://paperswithcode.com
+    - **GitHub・OSS**: 
+      - GitHub Trending
+        - https://github.com/trending
+      - Hugging Face
+        - https://huggingface.co/models
+        - https://huggingface.co/blog
+        - https://huggingface.co/spaces
+        - LeRobot
+          - https://huggingface.co/lerobot
+          - https://huggingface.co/organizations/lerobot/activity/all
+    - **ソーシャルメディア**: 
+      - Twitter/X
+        - https://twitter.com
+        - https://x.com/Gradio
+        - https://x.com/_akhaliq
+        - https://x.com/ImAI_Eruel
+      - LinkedIn
+        - https://www.linkedin.com
+      - Reddit
+        - https://www.reddit.com/r/MachineLearning
+        - https://www.reddit.com/r/artificial
 
 default_report:
   title: "最新AI技術動向検索"
   prompt: |
-    あなたは最新のAI技術動向を調査する専門家です。利用可能なWeb検索機能を最大限活用して、以下の手順で最新情報を調査してください：
-
-    ## 重要トレンドワード（優先的に調査）
-    以下のキーワードに関連する最新情報を特に重視して調査してください：
-
-    {key_words}
+    あなたは最新のAI技術動向を調査する専門家です。以下の情報源を**優先的に**調査し、必要に応じてその他の関連URLも調査して、リアルタイムの情報を提供してください：
 
     ## 調査手順
-    1. **最新AI企業の発表を検索**：
-       - OpenAI、Anthropic、Google, Microsoft, Amazon, NVIDIA などの大手米国AI企業や中国AI企業の最新発表
-       - 新製品、新機能、研究論文の公開
+    1. **{key_urls} の優先情報源から最新情報を収集**：
+       - 上記の優先調査対象から最新発表を確認
+       - 新製品、新機能、研究論文の公開情報を収集
+       - 上記の優先情報源で十分な情報が得られない場合は、その他の関連する情報源も調査してください。
 
     2. **{key_words} のキーワードに関連する最新技術トレンドを調査**：
+       - 優先情報源から関連する最新動向を検索
+       - 必要に応じてその他の情報源も調査
 
-    3. **{key_words} のキーワード以外に関連する最新技術トレンドを調査**：
+    3. **学術研究を確認**：
+       - arXiv最新論文や主要カンファレンス（NeurIPS、ICML、ACL）の発表を確認
+       - 大学・研究機関の公式サイトも調査
 
-    4. **学術研究を確認**：
-       - arXivでの最新論文や主要カンファレンス（NeurIPS、ICML、ACL）の発表など
+    4. **業界ニュースを収集**：
+       - 優先情報源から投資・M&A動向、新興企業の動きを調査
+       - 地域別・分野別の専門メディアも必要に応じて調査
 
-    5. **業界ニュースを収集**：
-       - 投資・M&A動向
-       - 新興企業の動き
-       - 技術的ブレークスルーなど
+    5. **オープンソース（OSS）動向を調査**：
+       - GitHub、Hugging Faceでの最新OSSプロジェクトを確認
+       - その他のOSSプラットフォーム（GitLab、Bitbucket等）も調査
 
-    6. **オープンソース（OSS）動向を調査**：
-       - GitHub、GitLabでの最新OSSプロジェクト
-       - Hugging Face、TransformersなどのオープンソースAI
-       - オープンソースモデルのリリース・更新
-       - OSSコミュニティでの技術的議論・コントリビューション
-
-    7. **SNS・ソーシャルメディア情報を調査**：
-       - Twitter/X、LinkedIn、Reddit, テックブログなどの最新投稿
-       - AI研究者・エンジニアのリアルタイム議論
-       - 業界リーダーの発言・見解
-       - コミュニティでの技術的議論・トレンド
+    6. **ソーシャルメディア・コミュニティ情報を調査**：
+       - 優先情報源のソーシャルメディアから最新投稿を確認
+       - その他の専門フォーラム・コミュニティも調査
 
     ## レポート形式
     以下の形式で詳細なレポートを作成してください：
@@ -100,27 +149,41 @@ default_report:
 
     ### 📚 関連リソース
     [各情報源のURLと簡単な説明]
+    - 必ず具体的なURLを記載してください
+    - 情報の信頼性を確保するため、公式サイトや信頼できるメディアの情報を優先してください
 
-    **重要**: 必ずWeb検索機能を使用し、{current_year}年の利用可能な最新情報のみを報告してください。推測や一般的な情報ではなく、具体的で検証可能な情報を提供してください。調査手順は、レポートに含めないで良いです。
+    **重要**: 上記の具体的なURLやその他URLから最新情報を取得し、{current_year}年の最新リアルタイム情報のみを報告してください。推測や一般的な情報ではなく、具体的で検証可能な情報を提供してください。各情報には必ず出典URLを記載してください。
 
 weekly_report:
   title: "週次レポート"
   prompt: |
-    {week_period}のAI技術動向について、Web検索機能を使って包括的なレポートを作成してください。
+    {week_period}のAI技術動向について、以下の情報源を**優先的に**調査し、必要に応じてその他の関連URLも調査して包括的なレポートを作成してください。
 
-    ## 重要トレンドワード（優先的に調査）
-    以下のキーワードに関連する最新情報を特に重視して調査してください：
+    ## 調査手順
+    1. **{key_urls} の優先情報源から最新情報を収集**：
+       - 上記の優先調査対象から最新発表を確認
+       - 新製品、新機能、研究論文の公開情報を収集
+       - 上記の優先情報源で十分な情報が得られない場合は、その他の関連する情報源も調査してください。
 
-    {key_words}
+    2. **{key_words} のキーワードに関連する最新技術トレンドを調査**：
+       - 優先情報源から関連する最新動向を検索
+       - 必要に応じてその他の情報源も調査
 
-    ## 調査対象
-    - 主要AI企業（OpenAI、Anthropic、Google、Microsoft）の発表
-    - 上記トレンドワードに関連する最新動向
-    - 学術研究の最新動向
-    - 業界ニュースと投資動向
-    - 新技術・新製品の発表
-    - SNS・ソーシャルメディア・テックブログでの最新議論とトレンド
-    - オープンソース（OSS）プロジェクトの最新動向
+    3. **学術研究を確認**：
+       - arXiv最新論文や主要カンファレンス（NeurIPS、ICML、ACL）の発表を確認
+       - 大学・研究機関の公式サイトも調査
+
+    4. **業界ニュースを収集**：
+       - 優先情報源から投資・M&A動向、新興企業の動きを調査
+       - 地域別・分野別の専門メディアも必要に応じて調査
+
+    5. **オープンソース（OSS）動向を調査**：
+       - GitHub、Hugging Faceでの最新OSSプロジェクトを確認
+       - その他のOSSプラットフォーム（GitLab、Bitbucket等）も調査
+
+    6. **ソーシャルメディア・コミュニティ情報を調査**：
+       - 優先情報源のソーシャルメディアから最新投稿を確認
+       - その他の専門フォーラム・コミュニティも調査
 
     ## レポート構成
     ### 🔥 {week_period}の重要ニュース
@@ -139,20 +202,33 @@ monthly_report:
   prompt: |
     {month_period}のAI技術動向を振り返り、重要な変化と今後の展望をまとめた月次レポートを作成してください。
 
-    ## 重要トレンドワード（優先的に調査）
-    以下のキーワードに関連する最新情報を特に重視して調査してください：
+    ## 調査手順
+    1. **{key_urls} の優先情報源から最新情報を収集**：
+       - 上記の優先調査対象から最新発表を確認
+       - 新製品、新機能、研究論文の公開情報を収集
+       - 上記の優先情報源で十分な情報が得られない場合は、その他の関連する情報源も調査してください。
 
-    {key_words}
+    2. **{key_words} のキーワードに関連する最新技術トレンドを調査**：
+       - 優先情報源から関連する最新動向を検索
+       - 必要に応じてその他の情報源も調査
 
-    ## 調査範囲
-    - {month_period}の主要発表・イベント
-    - 上記トレンドワードに関連する技術的ブレークスルー
-    - 業界の変化・トレンド
-    - オープンソース（OSS）プロジェクトの月間動向
-    - コミュニティでの月間トレンドと議論
-    - 次月への展望
+    3. **学術研究を確認**：
+       - arXiv最新論文や主要カンファレンス（NeurIPS、ICML、ACL）の発表を確認
+       - 大学・研究機関の公式サイトも調査
 
-    ## サマリー構成
+    4. **業界ニュースを収集**：
+       - 優先情報源から投資・M&A動向、新興企業の動きを調査
+       - 地域別・分野別の専門メディアも必要に応じて調査
+
+    5. **オープンソース（OSS）動向を調査**：
+       - GitHub、Hugging Faceでの最新OSSプロジェクトを確認
+       - その他のOSSプラットフォーム（GitLab、Bitbucket等）も調査
+
+    6. **ソーシャルメディア・コミュニティ情報を調査**：
+       - 優先情報源のソーシャルメディアから最新投稿を確認
+       - その他の専門フォーラム・コミュニティも調査
+
+    ## レポート構成
     ### 📊 {month_period}ハイライト
     ### 🔄 技術的変化
     ### 📈 市場動向
@@ -160,4 +236,3 @@ monthly_report:
     ### 🔧 オープンソース（OSS）動向
     ### 📱 コミュニティ・ソーシャルメディア動向
     ### 🔮 今後の展望
-
