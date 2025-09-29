@@ -20,15 +20,11 @@ class Settings(BaseSettings):
     github_token: str = os.getenv("GITHUB_TOKEN", "")
     github_repo: str = os.getenv("GITHUB_REPOSITORY", "Yagami360/ai-tech-catchup-agent")
 
-    # レポート設定
-    report_frequency: str = "weekly"  # daily, weekly, monthly
-    report_language: str = "ja"  # ja, en
-
     # Claude設定
     claude_model: str = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514")
     max_tokens: int = int(os.getenv("MAX_TOKENS", "10000"))
 
-    # レポート詳細設定
+    # プロンプト設定
     news_count: int = int(os.getenv("NEWS_COUNT", "20"))
 
     model_config = {"env_file": ".env", "extra": "ignore"}
