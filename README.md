@@ -8,9 +8,9 @@
 
 最新AI技術の最新/週次/月次レポートを GitHub Issue で自動作成する AI Agent です。
 
-- 最新レポート: https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Areport
-- 週次レポート: https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Aweekly-report
-- 月次レポート: https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Amonthly-report
+- [📅 最新レポート](https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Areport)
+- [📊 週次レポート](https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Aweekly-report)
+- [📈 月次レポート](https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Amonthly-report)
 
 ## ✨ 主な機能
 
@@ -24,9 +24,9 @@
 
 自動実行されるので特別な操作は不要です。手動実行したい場合は、`workflow_dispatch` で動かすこともできます。
 
-- [📅 Daily Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml)
-- [📊 Weekly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml)
-- [📈 Monthly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
+- [📅 Daily Report のワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml)
+- [📊 Weekly Report のワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml)
+- [📈 Monthly Report のワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
 
 > ⚠️ 注意点: claude API 利用のクレジットが尽きた場合は、GitHub シークレットの claude の API キー（`ANTHROPIC_API_KEY`）の値を利用可能な API キーにする必要があります
 
