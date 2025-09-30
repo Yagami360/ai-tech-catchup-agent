@@ -71,7 +71,7 @@ class ClaudeCodeClient:
             # Claude Code SDKオプションを設定
             options = ClaudeCodeOptions(
                 model=self.model,
-                allowed_tools=["WebSearch", "Read", "Bash"],
+                allowed_tools=["WebSearch", "WebFetch", "Read", "Bash"],
                 permission_mode="acceptEdits",
             )
 
