@@ -14,15 +14,15 @@ setup: install
 
 # Run AI Agent for latest report
 run: install
-	uv run python -m src.main
+	uv run python -m src.main --slack
 
 # Run AI Agent for weekly report
 run-weekly: install
-	uv run python -m src.main weekly
+	uv run python -m src.main weekly --slack
 
 # Run AI Agent for monthly report
 run-monthly: install
-	uv run python -m src.main monthly
+	uv run python -m src.main monthly --slack
 
 # Run AI Agent with test mode
 test: install

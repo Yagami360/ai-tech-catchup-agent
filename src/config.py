@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     # プロンプト設定
     news_count: int = int(os.getenv("NEWS_COUNT", "20"))
 
+    # Slack設定
+    slack_webhook_url: str = os.getenv("SLACK_WEBHOOK_URL", "")
+
     model_config = {"env_file": ".env", "extra": "ignore"}
 
 
