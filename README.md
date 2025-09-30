@@ -1,6 +1,10 @@
 # 🤖 AI Tech Catchup Agent
 
-Claude CodeのWeb検索機能を活用して、最新AI技術情報を取得/分析し、最新レポートや週次/月次レポート自動作成し、GitHub Issue で提供する AI Agent です。
+最新AI技術情報の最新/週次/月次レポートを GitHub Issue で自動作成する AI Agent です。
+
+- 最新レポート: https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Areport
+- 週次レポート: https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Aweekly-report
+- 月次レポート: https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Amonthly-report
 
 ## ✨ 主な機能
 
