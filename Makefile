@@ -1,12 +1,9 @@
-.PHONY: install update setup run run-weekly run-monthly test lint format format-check
+.PHONY: install setup run run-weekly run-monthly test lint format format-check
 
 # Install dependencies
 install:
-	uv sync --extra dev
-
-# Update dependencies
-update:
 	uv lock --upgrade
+	uv sync --extra dev
 
 # Setup development environment
 setup: install
@@ -15,20 +12,20 @@ setup: install
 		@echo "Created environment configuration file. Please edit the .env file to set the API keys."
 	fi
 
-# Run AI Agent on local environment
-run:
+# Run AI Agent for latest report
+run: install
 	uv run python -m src.main
 
 # Run AI Agent for weekly report
-run-weekly:
+run-weekly: install
 	uv run python -m src.main weekly
 
 # Run AI Agent for monthly report
-run-monthly:
+run-monthly: install
 	uv run python -m src.main monthly
 
 # Run AI Agent with test mode
-test:
+test: install
 	@echo "Running report test..."
 	uv run python -m src.main --claude-model claude-3-5-haiku-20241022 --max-tokens 50 --news-count 1 --no-issue
 	@echo "Running weekly report test..."
@@ -37,16 +34,16 @@ test:
 	uv run python -m src.main monthly --claude-model claude-3-5-haiku-20241022 --max-tokens 50 --news-count 1 --no-issue
 
 # Run code linting
-lint:
-	uv run flake8 . --exclude=.venv,venv,__pycache__,.git,.mypy_cache,.pytest_cache --max-line-length=150
+lint: install
+	uv run flake8 .
 	uv run mypy .
 
 # Run code formatting
-format:
+format: install
 	uv run black .
 	uv run isort .
 
 # Run code formatting check
-format-check:
+format-check: install
 	uv run black --check .
 	uv run isort --check-only .

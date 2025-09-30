@@ -33,17 +33,6 @@ class ClaudeClient:
                 model=self.model,
                 max_tokens=self.max_tokens,
                 messages=[{"role": "user", "content": message}],
-                tools=[
-                    {
-                        "name": "web_search",
-                        "description": "Search the web for real-time information about AI technology trends, news, and developments",
-                        "input_schema": {
-                            "type": "object",
-                            "properties": {"query": {"type": "string", "description": "The search query to find relevant information"}},
-                            "required": ["query"],
-                        },
-                    }
-                ],
             )
 
             # response.content[0]はTextBlockであることを確認
