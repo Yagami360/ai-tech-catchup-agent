@@ -1,4 +1,4 @@
-name: Monthly Report by AI Tech Catchup Agent
+name: Monthly Report
 
 on:
   workflow_dispatch:

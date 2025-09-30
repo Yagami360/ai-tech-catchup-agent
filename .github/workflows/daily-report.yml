@@ -1,4 +1,4 @@
-name: Daily Report by AI Tech Catchup Agent
+name: Daily Report
 
 on:
   workflow_dispatch:

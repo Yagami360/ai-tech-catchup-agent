@@ -1,4 +1,4 @@
-name: Report by AI Tech Catchup Agent
+name: Report
 
 on:
   workflow_dispatch:
