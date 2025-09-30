@@ -6,7 +6,7 @@
 [![Monthly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
 [![Claude](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/claude.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/claude.yml)
 
-最新AI技術の最新/週次/月次レポートを GitHub Issue で自動作成する AI Agent です。
+最新AI技術の最新/週次/月次レポートを GitHub Issue に自動作成する AI Agent です。
 
 - [📅 最新レポート](https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Areport)
 - [📊 週次レポート](https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Aweekly-report)
@@ -22,13 +22,15 @@
 
 ### ☁️ GitHubActions で動かす場合
 
-自動実行されるので特別な操作は不要です。手動実行したい場合は、`workflow_dispatch` で動かすこともできます。
+自動実行されるので特別な操作は不要です。
 
-- [📅 Daily Report のワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml)
-- [📊 Weekly Report のワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml)
-- [📈 Monthly Report のワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
+手動実行したい場合は、以下ワークフローの `workflow_dispatch` で動かすこともできます。
 
-> ⚠️ 注意点: claude API 利用のクレジットが尽きた場合は、GitHub シークレットの claude の API キー（`ANTHROPIC_API_KEY`）の値を利用可能な API キーにする必要があります
+- [📅 最新レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml)
+- [📊 週次レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml)
+- [📈 月次レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
+
+⚠️ 注意点: claude API 利用のクレジットが尽きた場合は、GitHub シークレットの claude の API キー（`ANTHROPIC_API_KEY`）の値を利用可能な API キーにする必要があります
 
 ### 💻 ローカル環境で動かす場合
 
@@ -70,7 +72,9 @@ make run-weekly
 make run-monthly
 ```
 
-#### 📋 利用可能なコマンド
+### 👨‍💻 開発者向け情報
+
+#### 📋 利用可能コマンド
 
 | コマンド | 説明 |
 |---------|------|
