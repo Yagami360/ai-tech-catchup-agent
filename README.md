@@ -18,22 +18,21 @@
 - **Claude Code統合**: Claude code の Web 検索機能を活用した最新情報取得
 - **カスタム調査**: Issue 内での `@claude` メンションで任意プロンプトで特定トピックを調査
 
-## 使用方法
+## 🚀 使用方法
 
-### GitHubActions で動かす場合
+### ☁️ GitHubActions で動かす場合
 
-自動実行されるので、特別な操作は不要です。
-手動実行したい場合は、`workflow_dispatch` で動かすこともできます。
+自動実行されるので特別な操作は不要です。手動実行したい場合は、`workflow_dispatch` で動かすこともできます。
 
-- [Daily Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml)
-- [Weekly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml)
-- [Monthly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
+- [📅 Daily Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml)
+- [📊 Weekly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml)
+- [📈 Monthly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
 
-> 注意点: claude API 利用のクレジットが尽きた場合は、GitHub シークレットの claude の API キー（`ANTHROPIC_API_KEY`）の値を利用可能な API キーにする必要があります
+> ⚠️ 注意点: claude API 利用のクレジットが尽きた場合は、GitHub シークレットの claude の API キー（`ANTHROPIC_API_KEY`）の値を利用可能な API キーにする必要があります
 
-### ローカル環境で動かす場合
+### 💻 ローカル環境で動かす場合
 
-#### 1. 依存関係のインストール
+#### 1️⃣ 依存関係のインストール
 
 ```bash
 # uvのインストール（まだの場合）
@@ -46,7 +45,7 @@ source $HOME/.local/bin/env
 make install
 ```
 
-#### 2. 環境設定
+#### 2️⃣ 環境設定
 
 ```bash
 # 環境設定ファイルの作成
@@ -58,16 +57,16 @@ make setup
 # GITHUB_REPOSITORY=your_username/your_repo
 ```
 
-#### 3. 実行
+#### 3️⃣ 実行
 
 ```bash
-# 最新レポート作成
+# 📰 最新レポート作成
 make run
 
-# 週次レポート作成
+# 📊 週次レポート作成
 make run-weekly
 
-# 月次レポート作成
+# 📈 月次レポート作成
 make run-monthly
 ```
 
@@ -75,11 +74,11 @@ make run-monthly
 
 | コマンド | 説明 |
 |---------|------|
-| `make install` | 依存関係をインストール |
-| `make setup` | 開発環境のセットアップ |
-| `make run` | 最新レポート作成 |
-| `make run-weekly` | 週次レポート生成 |
-| `make run-monthly` | 月次レポート生成 |
-| `make test` | テストを実行 |
-| `make lint` | コードのリンティング |
-| `make format` | コードのフォーマット |
+| `make install` | 📦 依存関係をインストール |
+| `make setup` | ⚙️ 開発環境のセットアップ |
+| `make run` | 📰 最新レポート作成 |
+| `make run-weekly` | 📊 週次レポート生成 |
+| `make run-monthly` | 📈 月次レポート生成 |
+| `make test` | 🧪 テストを実行 |
+| `make lint` | 🔍 コードのリンティング |
+| `make format` | ✨ コードのフォーマット |
