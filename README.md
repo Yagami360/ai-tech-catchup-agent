@@ -1,5 +1,7 @@
 # 🤖 AI Tech Catchup Agent
 
+[![CI](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/ci.yml)
+
 最新AI技術の最新/週次/月次レポートを GitHub Issue で自動作成する AI Agent です。
 
 - 最新レポート: https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Areport
