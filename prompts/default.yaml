@@ -33,10 +33,10 @@ key_words:
 key_urls:
   title: "主要情報取得先URL"
   sources: |
-    - **AI企業公式サイト**: 
+    - **AI企業公式サイト**:
       - OpenAI
-        - https://openai.com/blog
-        - https://openai.com/research
+        - https://openai.com/ja-JP/news/
+        - https://openai.com/ja-JP/research/
       - Anthropic
         - https://www.anthropic.com/news
       - Google AI
@@ -48,7 +48,7 @@ key_urls:
       - NVIDIA
         - https://blogs.nvidia.com
         - https://developer.nvidia.com/blog
-    - **技術ニュース**: 
+    - **技術ニュース**:
       - TechCrunch AI
         - https://techcrunch.com/category/artificial-intelligence
       - VentureBeat AI
@@ -56,16 +56,15 @@ key_urls:
       - The Verge AI
         - https://www.theverge.com/ai-artificial-intelligence
       - Qiita
-        - https://qiita.com/
         - https://qiita.com/trend
       - GIGAZINE
-        - https://gigazine.net/
-    - **学術論文**: 
+        - https://gigazine.net/news/C4/
+    - **学術論文**:
       - arXiv最新論文
         - https://arxiv.org/list/cs.AI/recent
       - Papers with Code
         - https://paperswithcode.com
-    - **GitHub・OSS**: 
+    - **GitHub・OSS**:
       - GitHub Trending
         - https://github.com/trending
       - Hugging Face
@@ -73,10 +72,11 @@ key_urls:
         - https://huggingface.co/papers/trending
         - https://huggingface.co/models?sort=trending
         - https://huggingface.co/spaces?sort=trending
+        - https://huggingface.co/akhaliq/activity/posts
         - LeRobot
           - https://huggingface.co/lerobot
           - https://huggingface.co/organizations/lerobot/activity/all
-    - **ソーシャルメディア**: 
+    - **ソーシャルメディア**:
       - Twitter/X
         - https://twitter.com
         - https://x.com/Gradio

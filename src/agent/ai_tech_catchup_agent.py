@@ -41,7 +41,6 @@ class AITechCatchupAgent:
 
             # 2. Claude Codeで最新情報を検索
             logger.info("Claude Codeで最新情報を検索中...")
-            logger.info(f"入力プロンプト: {prompt}")
             search_result = self.claude_client.send_message(prompt)
 
             if search_result["status"] != "success":
