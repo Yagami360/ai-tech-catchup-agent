@@ -6,7 +6,7 @@
 [![Monthly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
 [![Claude](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/claude.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/claude.yml)
 
-最新AI技術の最新/週次/月次レポートを GitHub Issue に自動作成する AI Agent です。
+最新AI技術の最新/週次/月次レポートを GitHub Issue で自動作成する AI Agent です。
 
 - [📅 最新レポート](https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Areport)
 - [📊 週次レポート](https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Aweekly-report)
@@ -20,11 +20,11 @@
 
 ## 🚀 使用方法
 
-### ☁️ GitHubActions で動かす場合
+### ☁️ GitHub Actions で動かす場合
 
 自動実行されるので特別な操作は不要です。
 
-手動実行したい場合は、以下ワークフローの `workflow_dispatch` で動かすこともできます。
+手動実行したい場合は、以下ワークフローの `Run workflow` から動かすこともできます。
 
 - [📅 最新レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml)
 - [📊 週次レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml)
@@ -72,9 +72,9 @@ make run-weekly
 make run-monthly
 ```
 
-### 👨‍💻 開発者向け情報
+## 👨‍💻 開発者向け情報
 
-#### 📋 利用可能コマンド
+### 📋 利用可能コマンド
 
 | コマンド | 説明 |
 |---------|------|

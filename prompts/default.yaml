@@ -4,12 +4,12 @@ key_words:
   title: "AI技術キーワード"
   keywords: |
     **AI技術トレンドワード**:
-    - AGI (人工汎用知能)
+    - AGI, Artificial general intelligence
     - Multimodal AI, VLM, Vision-Language Models, VLA, Vision-Language Actions
     - LLM, ChatGPT, Claude, Gemini, Qwen, Llama, Local LLM
-    - RAG, Retrieval-Augmented Generation
-    - AI Agent, Multi-Agent Systems, MCP server
+    - AI Agent, Multi-Agent Systems, RAG, Retrieval-Augmented Generation, MCP server
     - Vibe Coding, AI Code Generation
+    - MLOps, LLMOps, RoboOps
     - Computer Vision
     - Audio AI, Voice AI
     - AI Safety, Explainable AI, AI Regulation, AI Governance, AI Policy
@@ -23,12 +23,12 @@ key_words:
     - Microsoft, Azure, Copilot
     - OpenAI, ChatGPT, GPT
     - Anthropic, Claude, Claude Code
-    - China, Baidu, DeepSeek, Tencent, Unitree
-    - Twitter, X, LinkedIn, Reddit, SNS
+    - Chinese AI ventures, Baidu, DeepSeek, Tencent, Unitree
+    - Japanese AI ventures, NEDO, New Energy and Industrial Technology Development Organization, 産業技術総合開発機構
     - Open Source, OSS, GitHub, AI Community
     - Hugging Face, Transformers, Gradio, Open Source Models, LeRobot
+    - SNS, Twitter, X, LinkedIn, Reddit
     - Gartner, Gartner Hype Cycle
-    - NEDO, New Energy and Industrial Technology Development Organization, 産業技術総合開発機構
 
 key_urls:
   title: "主要情報取得先URL"
@@ -82,11 +82,11 @@ key_urls:
         - https://x.com/Gradio
         - https://x.com/_akhaliq
         - https://x.com/ImAI_Eruel
+      - Reddit
+        - https://www.reddit.com/r/artificial
+        - https://www.reddit.com/r/MachineLearning
       - LinkedIn
         - https://www.linkedin.com
-      - Reddit
-        - https://www.reddit.com/r/MachineLearning
-        - https://www.reddit.com/r/artificial
 
 default_report:
   title: "最新AI技術動向検索"
@@ -104,7 +104,7 @@ default_report:
        - 必要に応じてその他キーワードも調査
 
     3. **学術研究を確認**：
-       - arXiv最新論文や主要カンファレンス（NeurIPS、ICML、ACL）の発表を確認
+       - arXiv最新論文や主要カンファレンス（NeurIPS、ICML、ACL）等の発表を確認
        - 大学・研究機関の公式サイトも調査
 
     4. **業界ニュースを収集**：
@@ -112,8 +112,8 @@ default_report:
        - 地域別・分野別の専門メディアも必要に応じて調査
 
     5. **オープンソース（OSS）動向を調査**：
-       - GitHub、Hugging Faceでの最新OSSプロジェクトを確認
-       - その他のOSSプラットフォーム（GitLab、Bitbucket等）も調査
+       - GitHub、Hugging Face での最新OSSプロジェクトを確認
+       - その他のOSSプラットフォーム（Gradio、GitLab、Bitbucket等）も調査
 
     6. **ソーシャルメディア・コミュニティ情報を調査**：
        - 優先情報源のソーシャルメディアから最新投稿を確認
@@ -125,7 +125,7 @@ default_report:
     ## 📊 最新AI技術動向レポート
 
     ### 🔥 重要ニュース（上位{news_count}件）
-    [具体的なニュースタイトルと詳細説明、URL付き]
+    [具体的なニュースタイトルと日付、詳細説明、URL付き]
 
     ### 📈 主要トレンド
     [具体的なトレンドと実例、数値データ付き]
@@ -137,7 +137,7 @@ default_report:
     [GitHub、Hugging Faceでの最新OSSプロジェクト、オープンソースモデル、コミュニティコントリビューション]
 
     ### 📱 SNS・コミュニティ動向
-    [Twitter/X、LinkedIn、Redditなどの最新投稿と議論、業界リーダーの発言]
+    [Twitter/X、LinkedIn、Redditなどの最新投稿と議論、米国/中国ビックテック企業の業界リーダーの発言]
 
     ### 💡 開発者向けポイント
     [実践的なアドバイスとリソース]
@@ -176,8 +176,8 @@ weekly_report:
        - 地域別・分野別の専門メディアも必要に応じて調査
 
     5. **オープンソース（OSS）動向を調査**：
-       - GitHub、Hugging Faceでの最新OSSプロジェクトを確認
-       - その他のOSSプラットフォーム（GitLab、Bitbucket等）も調査
+       - GitHub、Hugging Face での最新OSSプロジェクトを確認
+       - その他のOSSプラットフォーム（Gradio、GitLab、Bitbucket等）も調査
 
     6. **ソーシャルメディア・コミュニティ情報を調査**：
        - 優先情報源のソーシャルメディアから最新投稿を確認
@@ -211,7 +211,7 @@ monthly_report:
        - 必要に応じてその他キーワードも調査
 
     3. **学術研究を確認**：
-       - arXiv最新論文や主要カンファレンス（NeurIPS、ICML、ACL）の発表を確認
+       - arXiv最新論文や主要カンファレンス（NeurIPS、ICML、ACL）等の発表を確認
        - 大学・研究機関の公式サイトも調査
 
     4. **業界ニュースを収集**：
@@ -219,8 +219,8 @@ monthly_report:
        - 地域別・分野別の専門メディアも必要に応じて調査
 
     5. **オープンソース（OSS）動向を調査**：
-       - GitHub、Hugging Faceでの最新OSSプロジェクトを確認
-       - その他のOSSプラットフォーム（GitLab、Bitbucket等）も調査
+       - GitHub、Hugging Face 等での最新OSSプロジェクトを確認
+       - その他のOSSプラットフォーム（Gradio、GitLab、Bitbucket等）も調査
 
     6. **ソーシャルメディア・コミュニティ情報を調査**：
        - 優先情報源のソーシャルメディアから最新投稿を確認
