@@ -1,18 +1,29 @@
 # 🤖 AI Tech Catchup Agent
 
-Claude CodeのWeb検索機能を活用して、最新AI技術情報を取得・分析し、週次レポートをGitHub Issueで提供するAI Agentです。
+Claude CodeのWeb検索機能を活用して、最新AI技術情報を取得・分析し、週次・月次レポートを GitHub Issue で提供するAI Agentです。
 
 ## ✨ 主な機能
 
-- **Claude Code統合**: ClaudeのWeb検索機能を活用した最新情報取得
-- **自動レポート生成**: 毎週金曜日にGitHub Issueでレポートを自動生成
-- **カスタム検索**: 任意のプロンプトで特定トピックを検索
-- **技術インサイト**: 特定トピックの深掘り分析
-- **日本語対応**: 日本語でのレポート生成
+- **Claude Code統合**: Claude code のWeb検索機能を活用した最新情報取得
+- **自動レポート生成**: 一定期間間隔で GitHub Issue でのレポートを自動生成
+- **カスタム検索**: @claude メンションでの任意のプロンプトで特定トピックを調査
 
-## 🚀 クイックスタート
+## 使用方法
 
-### 1. 依存関係のインストール
+### GitHubActions で動かす場合
+
+自動実行されるので、特別な操作は不要です。
+手動実行したい場合は、`workflow_dispatch` で動かすこともできます。
+
+- [Daily Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml)
+- [Weekly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml)
+- [Monthly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
+
+> 注意点: claude API 利用のクレジットが尽きた場合は、GitHub シークレットの claude の API キー（`ANTHROPIC_API_KEY`）の値を利用可能な API キーにする必要があります
+
+### ローカル環境で動かす場合
+
+#### 1. 依存関係のインストール
 
 ```bash
 # uvのインストール（まだの場合）
@@ -25,7 +36,7 @@ source $HOME/.local/bin/env
 make install
 ```
 
-### 2. 環境設定
+#### 2. 環境設定
 
 ```bash
 # 環境設定ファイルの作成
@@ -37,7 +48,7 @@ make setup
 # GITHUB_REPOSITORY=your_username/your_repo
 ```
 
-### 3. 実行
+#### 3. 実行
 
 ```bash
 # 最新レポート作成
@@ -50,7 +61,7 @@ make run-weekly
 make run-monthly
 ```
 
-## 📋 利用可能なコマンド
+#### 📋 利用可能なコマンド
 
 | コマンド | 説明 |
 |---------|------|
@@ -62,25 +73,3 @@ make run-monthly
 | `make test` | テストを実行 |
 | `make lint` | コードのリンティング |
 | `make format` | コードのフォーマット |
-
-## 🔄 自動化
-
-GitHub Actionsで毎週金曜日9:00（UTC）に自動実行されます：
-
-```yaml
-schedule:
-  - cron: '0 9 * * 5'  # 毎週金曜日 9:00 (UTC)
-```
-
-## 📊 レポート例
-
-生成されるレポートには以下が含まれます：
-
-- 🤖 **使用モデル**: 使用されたAIモデル名（本文とラベルに表示）
-- 🏷️ **自動ラベル**: `weekly-report`, `claude-3.5-sonnet` など
-- 🎯 **トレンドワード優先**: 最新AI技術トレンドワードを重視した調査
-- 🔥 **重要ニュース**: 上位10件の重要記事（トレンドワード関連を優先）
-- 📈 **主要トレンド**: 技術トレンドの分析
-- 🚀 **技術的ハイライト**: 新技術や手法の説明
-- 💡 **開発者向けポイント**: 実践的なアドバイス
-- 📚 **関連リソース**: 記事のURLと説明

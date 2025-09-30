@@ -29,6 +29,15 @@ jobs:
         with:
           version: "latest"
 
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Claude Code CLI
+        run: |
+          npm install -g @anthropic-ai/claude-code
+
       - name: Install dependencies
         run: |
           uv sync --frozen
