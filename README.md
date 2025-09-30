@@ -1,6 +1,10 @@
 # 🤖 AI Tech Catchup Agent
 
 [![CI](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/ci.yml)
+[![Daily Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml)
+[![Weekly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml)
+[![Monthly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
+[![Claude](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/claude.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/claude.yml)
 
 最新AI技術の最新/週次/月次レポートを GitHub Issue で自動作成する AI Agent です。
 
