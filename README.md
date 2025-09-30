@@ -57,6 +57,9 @@ make setup
 # ANTHROPIC_API_KEY=your_api_key_here
 # GITHUB_TOKEN=your_github_token_here
 # GITHUB_REPOSITORY=your_username/your_repo
+
+# Slack通知設定（オプション）
+# SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
 ```
 
 #### 3️⃣ 実行
@@ -70,6 +73,35 @@ make run-weekly
 
 # 📈 月次レポート作成
 make run-monthly
+```
+
+### 📱 Slack通知設定（オプション）
+
+レポート生成時にSlackに通知を送信できます。
+
+#### 1️⃣ Slack Webhook URLの取得
+
+1. [Slack API](https://api.slack.com/apps)にアクセス
+2. 「Create New App」→「From scratch」を選択
+3. アプリ名とワークスペースを設定
+4. 「Incoming Webhooks」を有効化
+5. 「Add New Webhook to Workspace」でチャンネルを選択
+6. Webhook URLをコピー
+
+#### 2️⃣ 環境変数の設定
+
+```bash
+# .envファイルに追加
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
+```
+
+#### 3️⃣ 実行時にSlack通知を有効化
+
+```bash
+# Slack通知付きでレポート生成
+make run --slack
+make run-weekly --slack
+make run-monthly --slack
 ```
 
 ## 👨‍💻 開発者向け情報

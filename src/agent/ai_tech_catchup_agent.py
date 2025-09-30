@@ -6,7 +6,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional
 
-from ..client import ClaudeCodeClient, GitHubClient
+from ..client import ClaudeCodeClient, GitHubClient, SlackClient
 from ..config import settings
 from ..utils import PromptManager
 
@@ -16,12 +16,19 @@ logger = logging.getLogger(__name__)
 class AITechCatchupAgent:
     """AI Tech Catchup Agent メインクラス"""
 
-    def __init__(self, claude_model: Optional[str] = None, max_tokens: Optional[int] = None, prompts_dir: str = "prompts"):
+    def __init__(
+        self, claude_model: Optional[str] = None, max_tokens: Optional[int] = None, prompts_dir: str = "prompts", enable_slack: bool = False
+    ):
         self.claude_model = claude_model or settings.claude_model
         self.max_tokens = max_tokens or settings.max_tokens
         self.claude_client = ClaudeCodeClient(model=self.claude_model)
         self.github_client = GitHubClient(token=settings.github_token, repo=settings.github_repo)
         self.prompt_manager = PromptManager(prompts_dir)
+
+        # Slack通知の初期化（enable_slackがTrueでWebhook URLが設定されている場合のみ）
+        self.slack_client = None
+        if enable_slack and settings.slack_webhook_url:
+            self.slack_client = SlackClient(webhook_url=settings.slack_webhook_url)
 
     def run_catchup(
         self,
@@ -80,6 +87,16 @@ class AITechCatchupAgent:
 
                 logger.info(f"レポートIssueを作成しました: {issue_result.get('html_url', '')}")
                 result["issue_url"] = issue_result.get("html_url", "")
+
+                # Slack通知（設定されている場合）
+                if self.slack_client:
+                    self._send_slack_notification(
+                        title=f"🤖 AI Tech Catchup Report - {datetime.now().strftime('%Y-%m-%d')}",
+                        content=search_result["content"],
+                        report_type="report",
+                        issue_url=issue_result.get("html_url"),
+                        model=self.claude_model,
+                    )
             else:
                 logger.info("GitHub Issue作成をスキップしました")
 
@@ -143,6 +160,16 @@ class AITechCatchupAgent:
                 )
                 if issue_result.get("html_url"):
                     result["issue_url"] = issue_result.get("html_url", "")
+
+                    # Slack通知（設定されている場合）
+                    if self.slack_client:
+                        self._send_slack_notification(
+                            title=f"AI Tech Catchup Weekly Report - {week_title}",
+                            content=search_result["content"],
+                            report_type="weekly-report",
+                            issue_url=issue_result.get("html_url"),
+                            model=self.claude_model,
+                        )
             else:
                 logger.info("GitHub Issue作成をスキップしました")
 
@@ -202,6 +229,16 @@ class AITechCatchupAgent:
                 )
                 if issue_result.get("html_url"):
                     result["issue_url"] = issue_result.get("html_url", "")
+
+                    # Slack通知（設定されている場合）
+                    if self.slack_client:
+                        self._send_slack_notification(
+                            title=f"AI Tech Catchup Monthly Report - {datetime.now().strftime('%Y年%m月')}",
+                            content=search_result["content"],
+                            report_type="monthly-report",
+                            issue_url=issue_result.get("html_url"),
+                            model=self.claude_model,
+                        )
             else:
                 logger.info("GitHub Issue作成をスキップしました")
 
@@ -210,3 +247,42 @@ class AITechCatchupAgent:
         except Exception as e:
             logger.error(f"月次レポート生成中にエラー: {e}")
             return {"status": "error", "message": str(e)}
+
+    def _send_slack_notification(
+        self,
+        title: str,
+        content: str,
+        report_type: str,
+        issue_url: Optional[str] = None,
+        model: Optional[str] = None,
+    ) -> None:
+        """
+        Slack通知を送信（ヘルパーメソッド）
+
+        Args:
+            title: レポートタイトル
+            content: レポート内容
+            report_type: レポートタイプ
+            issue_url: GitHub Issue URL
+            model: 使用したモデル名
+        """
+        try:
+            if not self.slack_client:
+                logger.warning("Slack通知が設定されていません")
+                return
+
+            slack_result = self.slack_client.send_notification(
+                title=title,
+                content=content,
+                report_type=report_type,
+                issue_url=issue_url,
+                model=model,
+            )
+
+            if slack_result["status"] == "success":
+                logger.info("Slack通知を送信しました")
+            else:
+                logger.error(f"Slack通知送信エラー: {slack_result['message']}")
+
+        except Exception as e:
+            logger.error(f"Slack通知送信中にエラー: {e}")

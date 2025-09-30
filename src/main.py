@@ -28,6 +28,11 @@ def main() -> None:
     if no_issue:
         sys.argv.remove("--no-issue")  # フラグを削除して通常の引数処理に影響しないようにする
 
+    # --slackフラグをチェック
+    enable_slack = "--slack" in sys.argv
+    if enable_slack:
+        sys.argv.remove("--slack")  # フラグを削除して通常の引数処理に影響しないようにする
+
     # --news-countオプションをチェック
     news_count = None
     if "--news-count" in sys.argv:
@@ -70,7 +75,7 @@ def main() -> None:
             logger.error("--max-tokensには有効な数値を指定してください")
             sys.exit(1)
 
-    agent = AITechCatchupAgent(claude_model=claude_model, max_tokens=max_tokens)
+    agent = AITechCatchupAgent(claude_model=claude_model, max_tokens=max_tokens, enable_slack=enable_slack)
 
     # コマンドライン引数で実行モードを指定
     if len(sys.argv) > 1:
@@ -80,9 +85,10 @@ def main() -> None:
         elif mode == "monthly":
             result = agent.monthly_report(create_issue=not no_issue)
         else:
-            print("使用法: python main.py [weekly|monthly] [--no-issue] [--news-count N] [--claude-model MODEL] [--max-tokens N]")
+            print("使用法: python main.py [weekly|monthly] [--no-issue] [--slack] [--news-count N] [--claude-model MODEL] [--max-tokens N]")
             print("引数なしで実行するとデフォルトのキャッチアップを実行します")
             print("--no-issueフラグを指定するとGitHub Issueを作成しません")
+            print("--slackフラグを指定するとSlack通知を送信します")
             print("--news-count N で重要ニュースの件数を指定できます（デフォルト: 20）")
             print("--claude-model MODEL でClaudeモデルを指定できます（デフォルト: claude-sonnet-4-20250514）")
             print("--max-tokens N で最大トークン数を指定できます（デフォルト: 10000）")
