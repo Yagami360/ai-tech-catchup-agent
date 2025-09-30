@@ -1,12 +1,12 @@
 # 🤖 AI Tech Catchup Agent
 
-Claude CodeのWeb検索機能を活用して、最新AI技術情報を取得・分析し、週次・月次レポートを GitHub Issue で提供するAI Agentです。
+Claude CodeのWeb検索機能を活用して、最新AI技術情報を取得/分析し、最新レポートや週次/月次レポート自動作成し、GitHub Issue で提供する AI Agent です。
 
 ## ✨ 主な機能
 
-- **Claude Code統合**: Claude code のWeb検索機能を活用した最新情報取得
-- **自動レポート生成**: 一定期間間隔で GitHub Issue でのレポートを自動生成
-- **カスタム検索**: @claude メンションでの任意のプロンプトで特定トピックを調査
+- **自動レポート生成**: 毎週や毎月などの一定期間間隔で GitHub Issue でのレポートを自動生成
+- **Claude Code統合**: Claude code の Web 検索機能を活用した最新情報取得
+- **カスタム調査**: Issue 内での `@claude` メンションで任意プロンプトで特定トピックを調査
 
 ## 使用方法
 
