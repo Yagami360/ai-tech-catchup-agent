@@ -1,6 +1,6 @@
 # 🤖 AI Tech Catchup Agent
 
-最新AI技術情報の最新/週次/月次レポートを GitHub Issue で自動作成する AI Agent です。
+最新AI技術の最新/週次/月次レポートを GitHub Issue で自動作成する AI Agent です。
 
 - 最新レポート: https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Areport
 - 週次レポート: https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Aweekly-report
