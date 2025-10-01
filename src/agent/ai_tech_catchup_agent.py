@@ -4,9 +4,9 @@ AI Tech Catchup Agent メインクラス
 
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
-from ..client import ClaudeCodeClient, GitHubClient
+from ..client import ClaudeCodeClient, GeminiClient, GitHubClient
 from ..config import settings
 from ..utils import PromptManager
 
@@ -16,10 +16,20 @@ logger = logging.getLogger(__name__)
 class AITechCatchupAgent:
     """AI Tech Catchup Agent メインクラス"""
 
-    def __init__(self, claude_model: Optional[str] = None, max_tokens: Optional[int] = None, prompts_dir: str = "prompts"):
-        self.claude_model = claude_model or settings.claude_model
+    def __init__(self, model: Optional[str] = None, max_tokens: Optional[int] = None, prompts_dir: str = "prompts"):
+        self.model_name = model or settings.model_name
         self.max_tokens = max_tokens or settings.max_tokens
-        self.claude_client = ClaudeCodeClient(model=self.claude_model)
+
+        # モデル名に基づいてクライアントを選択
+        self.ai_client: Union[ClaudeCodeClient, GeminiClient]
+        if "claude" in self.model_name.lower():
+            self.ai_client = ClaudeCodeClient(model_name=self.model_name, max_tokens=self.max_tokens)
+        elif "gemini" in self.model_name.lower():
+            self.ai_client = GeminiClient(google_api_key=settings.google_api_key, model_name=self.model_name, max_tokens=self.max_tokens)
+        else:
+            logger.error(f"未対応のモデルです: {self.model_name}")
+            raise ValueError(f"未対応のモデルです: {self.model_name}")
+
         self.github_client = GitHubClient(token=settings.github_token, repo=settings.github_repo)
         self.prompt_manager = PromptManager(prompts_dir)
 
@@ -39,12 +49,12 @@ class AITechCatchupAgent:
                 logger.error("デフォルト検索プロンプトを取得できませんでした")
                 return {"status": "error", "message": "プロンプトの取得に失敗しました"}
 
-            # 2. Claude Codeで最新情報を検索
-            logger.info("Claude Codeで最新情報を検索中...")
-            search_result = self.claude_client.send_message(prompt)
+            # 2. LLM で最新情報を検索
+            logger.info("LLM モデル名で最新情報を検索中...")
+            search_result = self.ai_client.send_message(prompt)
 
             if search_result["status"] != "success":
-                logger.error(f"Claude Code検索エラー: {search_result['message']}")
+                logger.error(f"LLM 検索エラー: {search_result['message']}")
                 return {"status": "error", "message": search_result["message"]}
 
             result = {
@@ -59,7 +69,7 @@ class AITechCatchupAgent:
                 issue_body = f"""# 🤖 AI Tech Catchup Report
 
 - レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
-- 使用モデル: `{self.claude_model}`
+- 使用モデル: `{self.model_name}`
 ---
 
 {search_result["content"]}
@@ -71,7 +81,7 @@ class AITechCatchupAgent:
                 issue_result = self.github_client.create_issue(
                     title=f"🤖 AI Tech Catchup Report - {datetime.now().strftime('%Y-%m-%d')}",
                     body=issue_body,
-                    labels=["report", self.claude_client.model],
+                    labels=["report", self.model_name],
                 )
 
                 if "error" in issue_result:
@@ -100,9 +110,9 @@ class AITechCatchupAgent:
                 logger.error("週次レポートプロンプトを取得できませんでした")
                 return {"status": "error", "message": "プロンプトの取得に失敗しました"}
 
-            # Claude Codeでレポート生成
+            # LLM モデル名でレポート生成
             logger.info(f"入力プロンプト: {prompt}")
-            search_result = self.claude_client.send_message(prompt)
+            search_result = self.ai_client.send_message(prompt)
 
             if search_result["status"] != "success":
                 return {"status": "error", "message": search_result["message"]}
@@ -127,7 +137,7 @@ class AITechCatchupAgent:
 
 - レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
 - 調査期間: `{week_period}`
-- 使用モデル: `{self.claude_model}`
+- 使用モデル: `{self.model_name}`
 ---
 
 {search_result["content"]}
@@ -139,7 +149,7 @@ class AITechCatchupAgent:
                 issue_result = self.github_client.create_issue(
                     title=f"AI Tech Catchup Weekly Report - {week_title}",
                     body=issue_body,
-                    labels=["weekly-report", self.claude_client.model],
+                    labels=["weekly-report", self.model_name],
                 )
                 if issue_result.get("html_url"):
                     result["issue_url"] = issue_result.get("html_url", "")
@@ -163,9 +173,9 @@ class AITechCatchupAgent:
                 logger.error("月次レポートプロンプトを取得できませんでした")
                 return {"status": "error", "message": "プロンプトの取得に失敗しました"}
 
-            # Claude Codeでレポート生成
+            # LLM モデル名でレポート生成
             logger.info(f"入力プロンプト: {prompt}")
-            search_result = self.claude_client.send_message(prompt)
+            search_result = self.ai_client.send_message(prompt)
 
             if search_result["status"] != "success":
                 return {"status": "error", "message": search_result["message"]}
@@ -186,7 +196,7 @@ class AITechCatchupAgent:
 
 - レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
 - 調査期間: `{month_period}`
-- 使用モデル: `{self.claude_model}`
+- 使用モデル: `{self.model_name}`
 ---
 
 {search_result["content"]}
@@ -198,7 +208,7 @@ class AITechCatchupAgent:
                 issue_result = self.github_client.create_issue(
                     title=f"AI Tech Catchup Monthly Report - {datetime.now().strftime('%Y年%m月')}",
                     body=issue_body,
-                    labels=["monthly-report", self.claude_client.model],
+                    labels=["monthly-report", self.model_name],
                 )
                 if issue_result.get("html_url"):
                     result["issue_url"] = issue_result.get("html_url", "")

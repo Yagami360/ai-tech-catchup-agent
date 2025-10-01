@@ -12,25 +12,27 @@
 - [📊 週次レポート](https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Aweekly-report)
 - [📈 月次レポート](https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Amonthly-report)
 
-## ✨ 主な機能
-
-- **自動レポート生成**: 毎週や毎月などの一定期間間隔で GitHub Issue でのレポートを自動生成
-- **Claude Code統合**: Claude code の Web 検索機能を活用した最新情報取得
-- **カスタム調査**: Issue 内での `@claude` メンションで任意プロンプトで特定トピックを調査
 
 ## 🚀 使用方法
 
 ### ☁️ GitHub Actions で動かす場合
 
-自動実行されるので特別な操作は不要です。
+1. GitHub secrets and variables を設定する
 
-手動実行したい場合は、以下ワークフローの `Run workflow` から動かすこともできます。
+    - Secrets<br>
+        - `ANTHROPIC_API_KEY`: Claude Model を使用する場合<br>
+        - `GOOGLE_API_KEY`: Gemini Model を使用する場合<br>
 
-- [📅 最新レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml)
-- [📊 週次レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml)
-- [📈 月次レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
+    - Variables<br>
+        - `MODEL_NAME`: 利用するモデル名<br>
 
-⚠️ 注意点: claude API 利用のクレジットが尽きた場合は、GitHub シークレットの claude の API キー（`ANTHROPIC_API_KEY`）の値を利用可能な API キーにする必要があります
+1. 一定期間間隔でワークフローが自動実行され、GitHub Issue にレポートが自動作成されます
+
+1. （オプション）手動実行したい場合は、以下ワークフローの `Run workflow` から動かすこともできます。
+
+    - [📅 最新レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml)
+    - [📊 週次レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml)
+    - [📈 月次レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
 
 ### 💻 ローカル環境で動かす場合
 
@@ -54,9 +56,13 @@ make install
 make setup
 
 # .envファイルを編集してAPIキーを設定
-# ANTHROPIC_API_KEY=your_api_key_here
+# ANTHROPIC_API_KEY=your_anthropic_api_key_here
+# GOOGLE_API_KEY=your_google_api_key_here
+# MODEL_NAME=claude-sonnet-4-20250514
 # GITHUB_TOKEN=your_github_token_here
 # GITHUB_REPOSITORY=your_username/your_repo
+# MAX_TOKENS=10000
+# NEWS_COUNT=20
 ```
 
 #### 3️⃣ 実行

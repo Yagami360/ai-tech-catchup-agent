@@ -17,11 +17,11 @@ class ClaudeClient:
     def __init__(
         self,
         anthropic_api_key: str,
-        model: str,
+        model_name: str,
         max_tokens: int,
     ):
         self.anthropic_api_key = anthropic_api_key
-        self.model = model
+        self.model_name = model_name
         self.max_tokens = max_tokens
 
     def send_message(self, message: str) -> Dict[str, Any]:
@@ -30,7 +30,7 @@ class ClaudeClient:
             client = anthropic.Anthropic(api_key=self.anthropic_api_key)
 
             response = client.messages.create(
-                model=self.model,
+                model=self.model_name,
                 max_tokens=self.max_tokens,
                 messages=[{"role": "user", "content": message}],
             )
@@ -47,7 +47,7 @@ class ClaudeClient:
                 "status": "success",
                 "content": response.content[0].text,
                 "searched_at": datetime.now().isoformat(),
-                "model": self.model,
+                "model": self.model_name,
             }
             logger.info("Claude API呼び出しが正常に完了しました")
             return result
