@@ -1,7 +1,3 @@
-"""
-Claude Code Client - Claude Code Python SDKを使用するクライアント
-"""
-
 import asyncio
 import logging
 from datetime import datetime
@@ -13,15 +9,15 @@ logger = logging.getLogger(__name__)
 
 
 class ClaudeCodeClient:
-    """Claude Code Client クラス（Python SDK使用）"""
+    """Claude Code Client クラス"""
 
-    def __init__(self, model_name: str = "claude-sonnet-4-20250514", max_tokens: int = 10000):
+    def __init__(self, model_name: str = "claude-sonnet-4-20250514", max_tokens: int | None = None):
         """
         Claude Code Client を初期化
 
         Args:
             model_name: 使用するモデル名（デフォルト: claude-sonnet-4-20250514）
-            max_tokens: 最大トークン数（デフォルト: 10000）
+            max_tokens: [Not Supported yet] 最大トークン数（デフォルト: None）
         """
         self.model_name = model_name
         self.max_tokens = max_tokens

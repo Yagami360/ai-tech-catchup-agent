@@ -19,12 +19,13 @@
 
 1. GitHub secrets and variables を設定する
 
-    - Secrets<br>
-        - `ANTHROPIC_API_KEY`: Claude Model を使用する場合<br>
-        - `GOOGLE_API_KEY`: Gemini Model を使用する場合<br>
-
     - Variables<br>
         - `MODEL_NAME`: 利用するモデル名<br>
+            現時点では Claude モデル（`claude-sonnet-4-20250514`, `claude-opus-4-1-20250805` など）と Gemini モデル（`gemini-2.5-flash`, `gemini-2.5-pro` など）をサポートしています
+
+    - Secrets<br>
+        - `ANTHROPIC_API_KEY`: Claude モデルを使用する場合<br>
+        - `GOOGLE_API_KEY`: Gemini モデルを使用する場合<br>
 
 1. 一定期間間隔でワークフローが自動実行され、GitHub Issue にレポートが自動作成されます
 

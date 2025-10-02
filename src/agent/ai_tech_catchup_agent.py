@@ -133,7 +133,7 @@ class AITechCatchupAgent:
                 # 週番号を計算（月の第何週目か）
                 week_number = (today.day - 1) // 7 + 1
                 week_title = f"{today.strftime('%Y年%m月')}第{week_number}週"
-                issue_body = f"""# AI Tech Catchup Weekly Report
+                issue_body = f"""# 📊 AI Tech Catchup Weekly Report
 
 - レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
 - 調査期間: `{week_period}`
@@ -147,7 +147,7 @@ class AITechCatchupAgent:
 *このレポートは AI Tech Catchup Agent によって自動生成されました。*
 """
                 issue_result = self.github_client.create_issue(
-                    title=f"AI Tech Catchup Weekly Report - {week_title}",
+                    title=f"📊 AI Tech Catchup Weekly Report - {week_title}",
                     body=issue_body,
                     labels=["weekly-report", self.model_name],
                 )
@@ -192,7 +192,7 @@ class AITechCatchupAgent:
                 today = datetime.now()
                 month_ago = today - timedelta(days=30)
                 month_period = f"{month_ago.strftime('%Y-%m-%d')} ~ {today.strftime('%Y-%m-%d')}"
-                issue_body = f"""# AI Tech Catchup Monthly Report
+                issue_body = f"""# 📈 AI Tech Catchup Monthly Report
 
 - レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
 - 調査期間: `{month_period}`
@@ -206,7 +206,7 @@ class AITechCatchupAgent:
 *このレポートは AI Tech Catchup Agent によって自動生成されました。*
 """
                 issue_result = self.github_client.create_issue(
-                    title=f"AI Tech Catchup Monthly Report - {datetime.now().strftime('%Y年%m月')}",
+                    title=f"📈 AI Tech Catchup Monthly Report - {datetime.now().strftime('%Y年%m月')}",
                     body=issue_body,
                     labels=["monthly-report", self.model_name],
                 )

@@ -1,12 +1,8 @@
-"""
-Gemini Client - Google Generative AI API を使用するクライアント
-"""
-
 import logging
 from datetime import datetime
 from typing import Any, Dict
 
-import google.generativeai as genai
+from google import genai
 
 logger = logging.getLogger(__name__)
 
@@ -14,37 +10,33 @@ logger = logging.getLogger(__name__)
 class GeminiClient:
     """Gemini Client クラス"""
 
-    def __init__(self, google_api_key: str, model_name: str = "gemini-2.0-flash-exp", max_tokens: int = 10000):
+    def __init__(self, google_api_key: str, model_name: str = "gemini-2.5-flash", max_tokens: int | None = None):
         """
         Gemini Client を初期化
 
         Args:
             google_api_key: Google API Key
-            model_name: 使用するモデル名（デフォルト: gemini-2.0-flash-exp）
-            max_tokens: 最大トークン数（デフォルト: 10000）
+            model_name: 使用するモデル名（デフォルト: gemini-2.5-flash）
+            max_tokens: 最大トークン数（デフォルト: None）
         """
         self.google_api_key = google_api_key
         self.model_name = model_name
         self.max_tokens = max_tokens
 
-        # Google AI APIの設定
-        genai.configure(api_key=self.google_api_key)
-
     def send_message(self, message: str) -> Dict[str, Any]:
         """Gemini APIにメッセージを送信"""
         try:
             # Geminiモデルの初期化
-            model = genai.GenerativeModel(
-                self.model_name,
-                # tools=["google_search_retrieval"],
-            )
+            client = genai.Client(api_key=self.google_api_key)
 
             # メッセージを送信
-            response = model.generate_content(
-                message,
-                generation_config=genai.types.GenerationConfig(
-                    max_output_tokens=self.max_tokens,
-                ),
+            response = client.models.generate_content(
+                model=self.model_name,
+                contents=message,
+                config={
+                    "tools": [{"google_search": {}}],
+                    "max_output_tokens": self.max_tokens,
+                },
             )
 
             # レスポンスの確認
