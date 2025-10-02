@@ -44,9 +44,9 @@ class AITechCatchupAgent:
         try:
             # 1. プロンプトの準備
             logger.info("プロンプトを準備中...")
-            prompt = self.prompt_manager.get_prompt("default_report", news_count=str(news_count or settings.news_count))
+            prompt = self.prompt_manager.get_prompt("report", news_count=str(news_count or settings.news_count))
             if not prompt:
-                logger.error("デフォルト検索プロンプトを取得できませんでした")
+                logger.error("プロンプトを取得できませんでした")
                 return {"status": "error", "message": "プロンプトの取得に失敗しました"}
 
             # 2. LLM で最新情報を検索
@@ -125,10 +125,11 @@ class AITechCatchupAgent:
 
             # GitHub Issue作成（オプション）
             if create_issue:
-                # 週次レポートの調査期間を計算
+                # 週次レポートの調査期間を計算（前日まで）
                 today = datetime.now()
-                week_ago = today - timedelta(days=7)
-                week_period = f"{week_ago.strftime('%Y-%m-%d')} ~ {today.strftime('%Y-%m-%d')}"
+                yesterday = today - timedelta(days=1)
+                week_ago = yesterday - timedelta(days=6)  # 前日から7日間
+                week_period = f"{week_ago.strftime('%Y-%m-%d')} ~ {yesterday.strftime('%Y-%m-%d')}"
 
                 # 週番号を計算（月の第何週目か）
                 week_number = (today.day - 1) // 7 + 1
@@ -188,10 +189,11 @@ class AITechCatchupAgent:
 
             # GitHub Issue作成（オプション）
             if create_issue:
-                # 月次レポートの調査期間を計算
+                # 月次レポートの調査期間を計算（前日まで）
                 today = datetime.now()
-                month_ago = today - timedelta(days=30)
-                month_period = f"{month_ago.strftime('%Y-%m-%d')} ~ {today.strftime('%Y-%m-%d')}"
+                yesterday = today - timedelta(days=1)
+                month_ago = yesterday - timedelta(days=29)  # 前日から30日間
+                month_period = f"{month_ago.strftime('%Y-%m-%d')} ~ {yesterday.strftime('%Y-%m-%d')}"
                 issue_body = f"""# 📈 AI Tech Catchup Monthly Report
 
 - レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
