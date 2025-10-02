@@ -3,8 +3,8 @@ name: Weekly Report
 on:
   workflow_dispatch:
   schedule:
-    # 毎週金曜日 9:00 (UTC)
-    - cron: '0 9 * * 5'
+    # 毎週金曜日 9:00 (JST)
+    - cron: '0 0 * * 5'
 
 jobs:
   ai-tech-catchup:
