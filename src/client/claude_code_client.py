@@ -1,7 +1,3 @@
-"""
-Claude Code Client - Claude Code Python SDKを使用するクライアント
-"""
-
 import asyncio
 import logging
 from datetime import datetime
@@ -13,17 +9,17 @@ logger = logging.getLogger(__name__)
 
 
 class ClaudeCodeClient:
-    """Claude Code Client クラス（Python SDK使用）"""
+    """Claude Code Client クラス"""
 
-    def __init__(self, model: str = "claude-sonnet-4-20250514", max_tokens: int = 10000):
+    def __init__(self, model_name: str = "claude-sonnet-4-20250514", max_tokens: int | None = None):
         """
         Claude Code Client を初期化
 
         Args:
-            model: 使用するモデル名（デフォルト: claude-sonnet-4-20250514）
-            max_tokens: 最大トークン数（デフォルト: 10000）
+            model_name: 使用するモデル名（デフォルト: claude-sonnet-4-20250514）
+            max_tokens: 最大トークン数（デフォルト: None）
         """
-        self.model = model
+        self.model_name = model_name
         self.max_tokens = max_tokens
 
     def send_message(self, message: str, timeout: int = 3600) -> Dict[str, Any]:
@@ -41,9 +37,12 @@ class ClaudeCodeClient:
             logger.info(f"プロンプト: {message}")
 
             # max_tokensに基づいて文字数制限を追加
-            estimated_chars = self.max_tokens * 2  # 日本語を考慮して2倍に設定
-            token_instruction = f"\n\n**重要**: 回答は最大{self.max_tokens}トークン（約{estimated_chars}文字）以内で簡潔にまとめてください。"
-            full_message = f"{message}{token_instruction}"
+            if self.max_tokens is not None:
+                estimated_chars = self.max_tokens * 2  # 日本語を考慮して2倍に設定
+                token_instruction = f"\n\n**重要**: 回答は最大{self.max_tokens}トークン（約{estimated_chars}文字）以内で簡潔にまとめてください。"
+                full_message = f"{message}{token_instruction}"
+            else:
+                full_message = message
 
             # 非同期関数を同期的に実行
             return asyncio.run(self._send_message_async(full_message, timeout))
@@ -70,7 +69,7 @@ class ClaudeCodeClient:
         try:
             # Claude Code SDKオプションを設定
             options = ClaudeCodeOptions(
-                model=self.model,
+                model=self.model_name,
                 allowed_tools=["WebSearch", "WebFetch", "Read", "Bash"],
                 permission_mode="acceptEdits",
             )
@@ -108,7 +107,7 @@ class ClaudeCodeClient:
                     "status": "success",
                     "content": content,
                     "searched_at": datetime.now().isoformat(),
-                    "model": self.model,
+                    "model": self.model_name,
                 }
 
             # async with文の後に到達した場合のフォールバック

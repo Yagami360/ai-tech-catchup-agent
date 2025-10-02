@@ -25,13 +25,16 @@ run-monthly: install
 	uv run python -m src.main monthly
 
 # Run AI Agent with test mode
+# TEST_MODEL ?= claude-3-5-haiku-20241022
+TEST_MODEL ?= gemini-2.0-flash-lite
+# TEST_MODEL ?= gemini-2.5-flash
 test: install
 	@echo "Running report test..."
-	uv run python -m src.main --claude-model claude-3-5-haiku-20241022 --max-tokens 50 --news-count 1 --no-issue
+	uv run python -m src.main --model $(TEST_MODEL) --max-tokens 50 --news-count 1 --no-issue
 	@echo "Running weekly report test..."
-	uv run python -m src.main weekly --claude-model claude-3-5-haiku-20241022 --max-tokens 50 --news-count 1 --no-issue
+	uv run python -m src.main weekly --model $(TEST_MODEL) --max-tokens 50 --news-count 1 --no-issue
 	@echo "Running monthly report test..."
-	uv run python -m src.main monthly --claude-model claude-3-5-haiku-20241022 --max-tokens 50 --news-count 1 --no-issue
+	uv run python -m src.main monthly --model $(TEST_MODEL) --max-tokens 50 --news-count 1 --no-issue
 
 # Run code linting
 lint: install

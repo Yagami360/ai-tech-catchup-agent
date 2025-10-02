@@ -1,7 +1,3 @@
-"""
-GitHub Client - Issue/PRの自動作成と管理
-"""
-
 import json
 import logging
 from typing import Any, Dict, Optional

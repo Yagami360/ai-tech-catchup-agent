@@ -9,6 +9,8 @@ from typing import Any, Dict, Optional
 
 import yaml
 
+from ..config import settings
+
 logger = logging.getLogger(__name__)
 
 
@@ -76,24 +78,26 @@ class PromptManager:
             if "sources" in key_urls_config:
                 kwargs["key_urls"] = key_urls_config["sources"]
 
-        # ニュース件数を動的に設定（デフォルト値: 10）
+        # ニュース件数を動的に設定
         if "news_count" not in kwargs:
-            kwargs["news_count"] = "10"
+            kwargs["news_count"] = str(settings.news_count)
 
         # 現在の年号を動的に設定
         if "current_year" not in kwargs:
             kwargs["current_year"] = str(datetime.now().year)
 
-        # 期間を動的に設定
+        # 期間を動的に設定（前日まで）
         if "week_period" not in kwargs:
             today = datetime.now()
-            week_ago = today - timedelta(days=7)
-            kwargs["week_period"] = f"{week_ago.strftime('%Y年%m月%d日')}から{today.strftime('%Y年%m月%d日')}までの過去1週間"
+            yesterday = today - timedelta(days=1)
+            week_ago = yesterday - timedelta(days=6)  # 前日から7日間
+            kwargs["week_period"] = f"{week_ago.strftime('%Y年%m月%d日')}から{yesterday.strftime('%Y年%m月%d日')}までの過去1週間"
 
         if "month_period" not in kwargs:
             today = datetime.now()
-            month_ago = today - timedelta(days=30)
-            kwargs["month_period"] = f"{month_ago.strftime('%Y年%m月%d日')}から{today.strftime('%Y年%m月%d日')}までの過去1ヶ月"
+            yesterday = today - timedelta(days=1)
+            month_ago = yesterday - timedelta(days=29)  # 前日から30日間
+            kwargs["month_period"] = f"{month_ago.strftime('%Y年%m月%d日')}から{yesterday.strftime('%Y年%m月%d日')}までの過去1ヶ月"
 
         if "template" in prompt_config:
             # テンプレートプロンプト（変数置換あり）
