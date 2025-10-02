@@ -2,9 +2,9 @@ name: Daily Report
 
 on:
   workflow_dispatch:
-  schedule:
-    # 毎日 9:00 (UTC)
-    - cron: '0 9 * * *'
+  # schedule:
+  #   # 毎日 9:00 (JST)
+  #   - cron: '0 0 * * *'
 
 jobs:
   ai-tech-catchup:

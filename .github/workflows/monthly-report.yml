@@ -3,8 +3,8 @@ name: Monthly Report
 on:
   workflow_dispatch:
   schedule:
-    # 毎月１回金曜日 9:00 (UTC)
-    - cron: '0 9 1 * *'
+    # 毎月１日 9:00 (JST)
+    - cron: '0 0 1 * *'
 
 jobs:
   ai-tech-catchup:
