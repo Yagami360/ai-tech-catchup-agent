@@ -57,6 +57,8 @@ key_urls:
         - https://www.theverge.com/ai-artificial-intelligence
       - Qiita
         - https://qiita.com/trend
+      - note
+        - https://note.com/npaka
       - GIGAZINE
         - https://gigazine.net/news/C4/
     - **学術論文**:
@@ -82,11 +84,16 @@ key_urls:
         - https://x.com/Gradio
         - https://x.com/_akhaliq
         - https://x.com/ImAI_Eruel
+        - https://x.com/npaka123
       - Reddit
         - https://www.reddit.com/r/artificial
         - https://www.reddit.com/r/MachineLearning
       - LinkedIn
         - https://www.linkedin.com
+    - *勉強会*
+      - Connpass
+        - https://connpass.com/explore/
+        - https://connpass.com/search/?q=AI&start_from=2025%2F10%2F02&start_to=2026%2F04%2F02
 
 default_report:
   title: "最新AI技術動向検索"
