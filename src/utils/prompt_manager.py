@@ -56,7 +56,7 @@ class PromptManager:
             logger.error(f"プロンプトディレクトリの読み込みエラー: {e}")
             return {}
 
-    def get_prompt(self, prompt_type: str, **kwargs: Any) -> Optional[str]:
+    def get_prompt(self, prompt_type: str, enabled_mcp_servers: Optional[list] = None, **kwargs: Any) -> Optional[str]:
         """指定されたタイプのプロンプトを取得"""
         if prompt_type not in self.prompts:
             logger.warning(f"プロンプトタイプが見つかりません: {prompt_type}")
@@ -77,6 +77,20 @@ class PromptManager:
             key_urls_config = self.prompts["key_urls"]
             if "sources" in key_urls_config:
                 kwargs["key_urls"] = key_urls_config["sources"]
+
+        # MCP ツール指示を動的に統合（有効なサーバーがある場合のみ）
+        mcp_tools_parts = []
+        if enabled_mcp_servers and "mcp_tools" in self.prompts:
+            mcp_config = self.prompts["mcp_tools"]
+            for server_name in enabled_mcp_servers:
+                # サーバー名に対応する指示を取得（例: "github_mcp", "filesystem_mcp"）
+                tool_key = f"{server_name}_mcp"
+                if tool_key in mcp_config:
+                    mcp_tools_parts.append(mcp_config[tool_key])
+                    logger.info(f"MCP ツール指示を追加: {server_name}")
+
+        # 統合された MCP ツール指示を設定
+        kwargs["mcp_tools"] = "\n\n".join(mcp_tools_parts) if mcp_tools_parts else ""
 
         # ニュース件数を動的に設定
         if "news_count" not in kwargs:
@@ -129,6 +143,9 @@ class PromptManager:
             # 月間期間が含まれている場合は置換
             if "{month_period}" in prompt_text and "month_period" in kwargs:
                 prompt_text = prompt_text.replace("{month_period}", kwargs["month_period"])
+            # MCP指示が含まれている場合は置換
+            if "{mcp_tools}" in prompt_text and "mcp_tools" in kwargs:
+                prompt_text = prompt_text.replace("{mcp_tools}", kwargs["mcp_tools"])
             return str(prompt_text)
         else:
             logger.error(f"プロンプト設定が無効です: {prompt_type}")

@@ -14,27 +14,27 @@ setup: install
 
 # Run AI Agent for latest report
 run: install
-	uv run python -m src.main
+	uv run python -m src.main --mcp-servers github
 
 # Run AI Agent for weekly report
 run-weekly: install
-	uv run python -m src.main weekly
+	uv run python -m src.main weekly --mcp-servers github
 
 # Run AI Agent for monthly report
 run-monthly: install
-	uv run python -m src.main monthly
+	uv run python -m src.main monthly --mcp-servers github
 
 # Run AI Agent with test mode
-# TEST_MODEL ?= claude-3-5-haiku-20241022
-TEST_MODEL ?= gemini-2.0-flash-lite
+TEST_MODEL ?= claude-3-5-haiku-20241022
+# TEST_MODEL ?= gemini-2.0-flash-lite
 # TEST_MODEL ?= gemini-2.5-flash
 test: install
-	@echo "Running report test..."
-	uv run python -m src.main --model $(TEST_MODEL) --max-tokens 50 --news-count 1 --no-issue
+	@echo "Running test report..."
+	uv run python -m src.main test --model $(TEST_MODEL) --max-tokens 50 --no-issue --mcp-servers github
 	@echo "Running weekly report test..."
-	uv run python -m src.main weekly --model $(TEST_MODEL) --max-tokens 50 --news-count 1 --no-issue
+	uv run python -m src.main weekly --model $(TEST_MODEL) --max-tokens 50 --news-count 1 --no-issue --mcp-servers github
 	@echo "Running monthly report test..."
-	uv run python -m src.main monthly --model $(TEST_MODEL) --max-tokens 50 --news-count 1 --no-issue
+	uv run python -m src.main monthly --model $(TEST_MODEL) --max-tokens 50 --news-count 1 --no-issue --mcp-servers github
 
 # Run code linting
 lint: install

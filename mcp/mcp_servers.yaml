@@ -1,0 +1,29 @@
+# MCP Server Configuration
+# 各 MCP サーバーの設定を定義
+
+servers:
+  github:
+    name: "GitHub MCP Server"
+    type: "stdio"
+    command: "npx"
+    args:
+      - "-y"
+      - "@github/github-mcp-server"
+    env:
+      GITHUB_TOKEN: "${GITHUB_TOKEN}"  # 環境変数から取得
+    allowed_tools:
+      - "mcp__github__*"
+    description: "GitHub リポジトリ、Issue、PR の操作"
+
+  # slack:
+  #   name: "Slack MCP Server"
+  #   type: "stdio"
+  #   command: "npx"
+  #   args:
+  #     - "-y"
+  #     - "@modelcontextprotocol/server-slack"
+  #   env:
+  #     SLACK_BOT_TOKEN: "${SLACK_BOT_TOKEN}"
+  #   allowed_tools:
+  #     - "mcp__slack__*"
+  #   description: "Slack メッセージの送受信"

@@ -1,9 +1,11 @@
 import asyncio
 import logging
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 from claude_code_sdk import ClaudeCodeOptions, ClaudeSDKClient
+
+from ..utils import MCPServerManager
 
 logger = logging.getLogger(__name__)
 
@@ -11,16 +13,24 @@ logger = logging.getLogger(__name__)
 class ClaudeCodeClient:
     """Claude Code Client クラス"""
 
-    def __init__(self, model_name: str = "claude-sonnet-4-20250514", max_tokens: int | None = None):
+    def __init__(
+        self,
+        model_name: str = "claude-sonnet-4-20250514",
+        max_tokens: int | None = None,
+        enabled_mcp_servers: Optional[List[str]] = None,
+    ):
         """
         Claude Code Client を初期化
 
         Args:
             model_name: 使用するモデル名（デフォルト: claude-sonnet-4-20250514）
             max_tokens: 最大トークン数（デフォルト: None）
+            enabled_mcp_servers: 有効にする MCP サーバー名のリスト（例: ["github", "filesystem"]）
         """
         self.model_name = model_name
         self.max_tokens = max_tokens
+        self.enabled_mcp_servers = enabled_mcp_servers or []
+        self.mcp_manager = MCPServerManager()
 
     def send_message(self, message: str, timeout: int = 3600) -> Dict[str, Any]:
         """
@@ -67,11 +77,26 @@ class ClaudeCodeClient:
             Claude Codeからの応答
         """
         try:
+            # 基本的な許可ツール
+            allowed_tools = ["WebSearch", "WebFetch", "Read", "Bash"]
+
+            # MCP サーバー設定を構築
+            mcp_servers = {}
+            if self.enabled_mcp_servers:
+                logger.info(f"MCP サーバーを有効化: {', '.join(self.enabled_mcp_servers)}")
+                mcp_servers = self.mcp_manager.build_mcp_config(self.enabled_mcp_servers)
+
+                # 有効な MCP サーバーのツールを許可リストに追加
+                mcp_tools = self.mcp_manager.get_allowed_tools(self.enabled_mcp_servers)
+                allowed_tools.extend(mcp_tools)
+                logger.info(f"MCP ツールを許可リストに追加: {mcp_tools}")
+
             # Claude Code SDKオプションを設定
             options = ClaudeCodeOptions(
                 model=self.model_name,
-                allowed_tools=["WebSearch", "WebFetch", "Read", "Bash"],
+                allowed_tools=allowed_tools,
                 permission_mode="acceptEdits",
+                mcp_servers=mcp_servers if mcp_servers else None,
             )
 
             # Claude Code SDKクライアントを使用

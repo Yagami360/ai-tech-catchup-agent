@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an AI Tech Catchup Agent that leverages Claude Code's web search functionality to gather and analyze the latest AI technology information, generating weekly reports through GitHub Issues. The agent is built in Python and automatically runs on Fridays via GitHub Actions.
+This is an AI Tech Catchup Agent that generates automated AI technology reports by leveraging LLM web search capabilities (Claude Code SDK and Gemini API). The agent runs on GitHub Actions and publishes daily/weekly/monthly reports as GitHub Issues.
+
+**Key Feature**: Supports both Claude models (via Claude Code SDK) and Gemini models (via Gemini API) with automatic client selection based on model name.
 
 ## Development Commands
 
@@ -17,9 +19,9 @@ make install
 make setup
 ```
 
-### Running the Application
+### Running Reports
 ```bash
-# Default AI tech catchup
+# Daily/latest report
 make run
 
 # Weekly report
@@ -28,89 +30,260 @@ make run-weekly
 # Monthly report
 make run-monthly
 
-# Specific topic search
-make run-topic TOPIC="大規模言語モデル"
+# With MCP servers enabled (Claude models only)
+make run-with-mcp
 
-# Custom prompt search
-make run-custom PROMPT="GPT-5の最新情報について調べて"
+# Weekly report with MCP servers
+make run-weekly-with-mcp
 
-# Run with custom news count
-make run-news NEWS_COUNT=15
-
-# Run without creating GitHub Issues
-make run-no-issue
+# Test mode (uses test_report prompt, no GitHub issue)
+make test
 ```
 
-### Development Tools
+### Code Quality
 ```bash
-# Code linting
-make lint          # Runs flake8 and mypy
+# Lint (flake8 + mypy)
+make lint
 
-# Code formatting
-make format        # Runs black formatter
+# Format (black + isort)
+make format
 
-# Testing (if tests exist)
-uv run pytest     # Standard pytest command
+# Format check only
+make format-check
+```
+
+### Direct Execution with Custom Options
+```bash
+# Custom model and token limits
+uv run python -m src.main --model gemini-2.5-flash --max-tokens 5000
+
+# Specific news count
+uv run python -m src.main --news-count 10
+
+# Skip GitHub issue creation
+uv run python -m src.main --no-issue
+
+# Enable MCP servers (Claude models only)
+uv run python -m src.main --mcp-servers github
+
+# Enable multiple MCP servers
+uv run python -m src.main --mcp-servers github,filesystem
+
+# Weekly report with custom model
+uv run python -m src.main weekly --model claude-sonnet-4-20250514
+
+# Test report (uses test_report prompt)
+uv run python -m src.main test --model claude-3-5-haiku-20241022
 ```
 
 ## Architecture
 
-### Core Components
+### Core Flow
+1. **Main Entry** (`src/main.py`): CLI argument parsing and execution orchestration
+2. **Agent** (`src/agent/ai_tech_catchup_agent.py`): Core report generation logic with client selection
+3. **Clients** (`src/client/`): LLM and GitHub API integrations
+4. **Prompt Management** (`src/utils/prompt_manager.py`): YAML-based prompt loading with dynamic variable substitution
+5. **Configuration** (`src/config.py`): Pydantic-based settings from environment variables
 
-- **`src/main.py`**: Main application entry point containing `AITechCatchupAgent` class
-- **`src/claude_search.py`**: Claude Code search functionality integration
-- **`src/github_integration.py`**: GitHub API integration for creating Issues
-- **`src/prompt_manager.py`**: Centralized prompt management system
-- **`config.py`**: Application configuration using Pydantic settings
+### Multi-Model Support Architecture
 
-### Key Design Patterns
+The agent automatically selects the appropriate AI client based on the model name:
 
-1. **Centralized Configuration**: Uses `config.py` with Pydantic settings for environment variable management
-2. **Modular Search System**: Separates Claude search logic from main application logic
-3. **Prompt Template System**: All prompts are managed in `prompts/default.yaml` with keyword interpolation
-4. **GitHub Integration**: Automated issue creation with labels and structured content
+- **Claude Models**: Uses `ClaudeCodeClient` with Claude Code SDK
+  - Supports web search via `WebSearch` and `WebFetch` tools
+  - Async execution with `claude-code-sdk` package
+  - **MCP Server support**: Extensible integration for external tools (GitHub, filesystem, database, etc.)
+  - Model examples: `claude-sonnet-4-20250514`, `claude-3-5-haiku-20241022`
 
-### Configuration Management
+- **Gemini Models**: Uses `GeminiClient` with Google Generative AI SDK
+  - Supports web search via Google Search grounding
+  - Synchronous API calls with `google-genai` package
+  - **MCP Server support**: Not supported
+  - Model examples: `gemini-2.5-flash`, `gemini-2.0-flash-exp`, `gemini-1.5-pro`
 
-- **Environment Variables**: Defined in `.env` file (copy from `.env.example`)
-  - `ANTHROPIC_API_KEY`: Claude API key
-  - `GITHUB_TOKEN`: GitHub token for issue creation
-  - `GITHUB_REPOSITORY`: Target repository for issues
-  - `CLAUDE_MODEL`: Claude model to use (default: claude-sonnet-4-20250514)
-  - `NEWS_COUNT`: Number of important news items to include
+**Client Selection Logic** (`src/agent/ai_tech_catchup_agent.py:23-31`):
+```python
+if "claude" in self.model_name.lower():
+    self.ai_client = ClaudeCodeClient(...)
+elif "gemini" in self.model_name.lower():
+    self.ai_client = GeminiClient(...)
+```
 
-- **Prompt Configuration**: `prompts/default.yaml` contains:
-  - `key_words`: Central AI technology keywords used across all prompts
-  - `default_search`: Default tech catchup prompt
-  - `topic_search`: Specific topic search template
-  - `custom_search`: Custom prompt template
-  - `weekly_report`: Weekly report generation
-  - `monthly_summary`: Monthly summary generation
+### Prompt System Design
 
-### Package Management
+All prompts are centralized in `prompts/default.yaml` with:
 
-- **Tool**: Uses `uv` for fast Python package management
+- **Keyword Sets**: `key_words` - AI technology keywords for consistent search targeting
+- **URL Sources**: `key_urls` - Priority information sources (company blogs, tech news, academic sites)
+- **Report Templates**: `report`, `weekly_report`, `monthly_report` with dynamic variable substitution
+
+**Dynamic Variables** automatically injected by `PromptManager`:
+- `{key_words}`: AI technology keywords from YAML
+- `{key_urls}`: Priority source URLs from YAML
+- `{news_count}`: Number of news items (from env or CLI)
+- `{current_year}`: Current year
+- `{week_period}`: Last 7 days period (ending yesterday)
+- `{month_period}`: Last 30 days period (ending yesterday)
+
+### GitHub Actions Integration
+
+Three scheduled workflows in `.github/workflows/`:
+- `daily-report.yml`: Daily execution (currently manual trigger only)
+- `weekly-report.yml`: Weekly execution
+- `monthly-report.yml`: Monthly execution
+
+**Required Secrets**:
+- `ANTHROPIC_API_KEY`: For Claude models
+- `GOOGLE_API_KEY`: For Gemini models
+- `GITHUB_TOKEN`: Auto-provided for issue creation
+
+**Required Variables**:
+- `MODEL_NAME`: AI model to use (e.g., `claude-sonnet-4-20250514` or `gemini-2.5-flash`)
+
+## Configuration Management
+
+### Environment Variables (.env)
+
+```bash
+# AI Model Configuration
+ANTHROPIC_API_KEY=sk-...           # Required for Claude models
+GOOGLE_API_KEY=...                 # Required for Gemini models
+MODEL_NAME=claude-sonnet-4-20250514  # or gemini-2.5-flash
+
+# Output Configuration
+MAX_TOKENS=10000                   # Optional: response length limit
+NEWS_COUNT=20                      # Number of important news items
+
+# GitHub Integration
+GITHUB_TOKEN=ghp_...               # For issue creation and MCP server
+GITHUB_REPOSITORY=owner/repo       # Target repository
+
+# MCP Configuration (Claude models only)
+ENABLED_MCP_SERVERS=github         # Comma-separated list: github,filesystem,database
+```
+
+**Model Selection**: Set `MODEL_NAME` to any supported model:
+- Claude: `claude-sonnet-4-20250514`, `claude-opus-4-1-20250805`, `claude-3-5-haiku-20241022`
+- Gemini: `gemini-2.5-flash`, `gemini-2.5-pro`, `gemini-2.0-flash-exp`, `gemini-1.5-pro`
+
+### Prompt Configuration (prompts/default.yaml)
+
+To modify search behavior or report structure:
+1. Edit `key_words.keywords` to adjust AI technology focus areas
+2. Edit `key_urls.sources` to change priority information sources
+3. Edit report templates (`report.prompt`, `weekly_report.prompt`, etc.) to change output format
+
+**Important**: Use `{key_words}`, `{key_urls}`, and other placeholders in templates - they're auto-populated by `PromptManager`.
+
+## Package Management
+
+- **Tool**: `uv` for fast Python dependency management
 - **Dependencies**: Defined in `pyproject.toml`
-- **Development Dependencies**: Include pytest, black, flake8, mypy
+- **Dev Dependencies**: Include `pytest`, `black`, `isort`, `flake8`, `mypy`
+- **Lock File**: `uv.lock` (committed to repository)
 
-### Automation
+## MCP Server Integration
 
-- **GitHub Actions**: `.github/workflows/ai-tech-catchup.yml`
-  - Runs every Friday at 9:00 UTC (`0 9 * * 5`)
-  - Uses `make run` command
-  - Requires `ANTHROPIC_API_KEY` and `GITHUB_TOKEN` secrets
+The agent supports extensible MCP (Model Context Protocol) Server integration for Claude models, enabling integration with various external tools and services.
+
+### MCP Server Architecture
+
+**Configuration Files**:
+- `mcp/mcp_servers.yaml`: MCP server definitions (command, args, environment variables)
+- `prompts/default.yaml`: MCP-specific prompt instructions under `mcp_tools`
+- `src/utils/mcp_manager.py`: MCP server configuration management
+
+### Enabling MCP Servers
+
+**Via Environment Variable**:
+```bash
+ENABLED_MCP_SERVERS=github,filesystem
+```
+
+**Via CLI**:
+```bash
+uv run python -m src.main --mcp-servers github
+uv run python -m src.main --mcp-servers github,filesystem,database
+```
+
+**Note on Gemini Support**:
+- **Claude models**: Full MCP server integration via Claude Code SDK
+- **Gemini models**: MCP servers not supported
+  - If `--mcp-servers` is specified with Gemini models, it will be ignored with a warning
+
+### Available MCP Servers
+
+#### GitHub MCP Server
+- **Configuration**: `mcp/mcp_servers.yaml` (github section)
+- **Requirements**: Node.js/npm, GITHUB_TOKEN
+- **Tools**: Repository ops, issues, PRs, code security, Actions
+- **Prompt Instructions**: `prompts/default.yaml` (github_mcp)
+
+#### Adding New MCP Servers
+
+1. **Define server in `mcp/mcp_servers.yaml`**:
+```yaml
+servers:
+  your_server:
+    name: "Your MCP Server"
+    type: "stdio"
+    command: "npx"
+    args: ["-y", "@your/mcp-server"]
+    env:
+      API_KEY: "${YOUR_API_KEY}"
+    allowed_tools:
+      - "mcp__your_server__*"
+    description: "Server description"
+```
+
+2. **Add prompt instructions in `prompts/default.yaml`**:
+```yaml
+mcp_tools:
+  your_server_mcp: |
+    **Your Server MCP ツールが利用可能な場合**:
+    - Tool usage instructions
+    - Best practices
+```
+
+3. **Enable the server**:
+```bash
+uv run python -m src.main --mcp-servers your_server
+```
+
+### How It Works
+
+1. **MCPServerManager** (`src/utils/mcp_manager.py`) loads `mcp/mcp_servers.yaml`
+2. Builds MCP configuration for enabled servers with environment variable expansion
+3. **ClaudeCodeClient** receives MCP config and allowed tools list
+4. **PromptManager** injects server-specific instructions into prompts
+5. Claude can use MCP tools during execution
+
+### Supported Server Examples
+
+- **GitHub**: Repository and issue management
+- **Filesystem**: Local file access (commented out, add as needed)
+- **Database**: PostgreSQL queries (commented out, add as needed)
+- **Slack**: Message operations (commented out, add as needed)
 
 ## Important Implementation Notes
 
-1. **Japanese Language Support**: The application primarily generates reports in Japanese but supports English through configuration
-2. **Web Search Integration**: Leverages Claude Code's web search capabilities for real-time information gathering
-3. **Keyword-Driven Search**: Uses centralized AI technology keywords from `prompts/default.yaml` for consistent search targeting
-4. **Structured Output**: Generates well-formatted reports with specific sections (news, trends, technical highlights, etc.)
-5. **GitHub Integration**: Creates issues with appropriate labels (`weekly-report`, `tech-insight`, model-specific tags)
+1. **Japanese Primary**: Reports are generated in Japanese; prompts are in Japanese
+2. **Web Search Required**: Both clients rely on web search capabilities for real-time information
+3. **Async vs Sync**: Claude Code SDK uses async/await; Gemini API is synchronous
+4. **Token Limits**: `max_tokens` parameter passed to both clients but handled differently (Claude: prompt instruction, Gemini: API config)
+5. **Date Calculations**: Reports use "yesterday" as end date to avoid incomplete current-day data (`src/agent/ai_tech_catchup_agent.py:128-132, 192-196`)
+6. **Error Handling**: GitHub client retries issue creation without labels if 422 error occurs (`src/client/github_client.py:44-56`)
+7. **MCP Server Support**:
+   - Claude: Native MCP integration via Claude Code SDK
+   - Gemini: Not supported (MCP options ignored with warning)
+8. **MCP Extensibility**: New MCP servers can be added via `mcp/mcp_servers.yaml` without code changes
 
-## Development Workflow
+## Testing Strategy
 
-1. **Local Development**: Use `make run-no-issue` to test without creating GitHub issues
-2. **Testing Prompts**: Use `make run-custom PROMPT="test prompt"` for quick prompt testing
-3. **Configuration Changes**: Modify `config.py` for application settings or `prompts/default.yaml` for prompt templates
-4. **Code Quality**: Run `make lint` before committing changes
+Use `make test` which runs all three report types with:
+- Minimal tokens (`--max-tokens 50`)
+- Single news item (`--news-count 1`)
+- No GitHub issue creation (`--no-issue`)
+- Fast model (`gemini-2.0-flash-lite` by default)
+
+Override test model via: `make test TEST_MODEL=claude-3-5-haiku-20241022`

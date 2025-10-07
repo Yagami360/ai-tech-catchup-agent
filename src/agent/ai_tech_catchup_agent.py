@@ -16,16 +16,29 @@ logger = logging.getLogger(__name__)
 class AITechCatchupAgent:
     """AI Tech Catchup Agent メインクラス"""
 
-    def __init__(self, model: Optional[str] = None, max_tokens: Optional[int] = None, prompts_dir: str = "prompts"):
+    def __init__(
+        self,
+        model: Optional[str] = None,
+        max_tokens: Optional[int] = None,
+        prompts_dir: str = "prompts",
+        enabled_mcp_servers: Optional[list] = None,
+    ):
         self.model_name = model or settings.model_name
         self.max_tokens = max_tokens or settings.max_tokens
+        self.enabled_mcp_servers = enabled_mcp_servers or []
 
         # モデル名に基づいてクライアントを選択
         self.ai_client: Union[ClaudeCodeClient, GeminiClient]
         if "claude" in self.model_name.lower():
-            self.ai_client = ClaudeCodeClient(model_name=self.model_name, max_tokens=self.max_tokens)
+            self.ai_client = ClaudeCodeClient(
+                model_name=self.model_name,
+                max_tokens=self.max_tokens,
+                enabled_mcp_servers=self.enabled_mcp_servers,
+            )
         elif "gemini" in self.model_name.lower():
             self.ai_client = GeminiClient(google_api_key=settings.google_api_key, model_name=self.model_name, max_tokens=self.max_tokens)
+            if self.enabled_mcp_servers:
+                logger.warning("MCP サーバーは Gemini モデルではサポートされていません。無視されます。")
         else:
             logger.error(f"未対応のモデルです: {self.model_name}")
             raise ValueError(f"未対応のモデルです: {self.model_name}")
@@ -37,6 +50,7 @@ class AITechCatchupAgent:
         self,
         create_issue: bool = True,
         news_count: Optional[int] = None,
+        test_mode: bool = False,
     ) -> Dict[str, Any]:
         """Claude Codeで最新AI情報をキャッチアップ"""
         logger.info("Claude CodeでAI技術キャッチアップを開始...")
@@ -44,7 +58,12 @@ class AITechCatchupAgent:
         try:
             # 1. プロンプトの準備
             logger.info("プロンプトを準備中...")
-            prompt = self.prompt_manager.get_prompt("report", news_count=str(news_count or settings.news_count))
+            prompt_type = "test_report" if test_mode else "report"
+            prompt = self.prompt_manager.get_prompt(
+                prompt_type,
+                enabled_mcp_servers=self.enabled_mcp_servers,
+                news_count=str(news_count or settings.news_count),
+            )
             if not prompt:
                 logger.error("プロンプトを取得できませんでした")
                 return {"status": "error", "message": "プロンプトの取得に失敗しました"}
@@ -105,7 +124,7 @@ class AITechCatchupAgent:
 
         try:
             # プロンプトの準備
-            prompt = self.prompt_manager.get_prompt("weekly_report")
+            prompt = self.prompt_manager.get_prompt("weekly_report", enabled_mcp_servers=self.enabled_mcp_servers)
             if not prompt:
                 logger.error("週次レポートプロンプトを取得できませんでした")
                 return {"status": "error", "message": "プロンプトの取得に失敗しました"}
@@ -169,7 +188,7 @@ class AITechCatchupAgent:
 
         try:
             # プロンプトの準備
-            prompt = self.prompt_manager.get_prompt("monthly_report")
+            prompt = self.prompt_manager.get_prompt("monthly_report", enabled_mcp_servers=self.enabled_mcp_servers)
             if not prompt:
                 logger.error("月次レポートプロンプトを取得できませんでした")
                 return {"status": "error", "message": "プロンプトの取得に失敗しました"}

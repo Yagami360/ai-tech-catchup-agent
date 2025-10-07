@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     github_token: str = os.getenv("GITHUB_TOKEN", "")
     github_repo: str = os.getenv("GITHUB_REPOSITORY", "Yagami360/ai-tech-catchup-agent")
 
+    # MCP設定（汎用）
+    # カンマ区切りで有効にする MCP サーバーを指定（例: "github,filesystem,database"）
+    enabled_mcp_servers: str = os.getenv("ENABLED_MCP_SERVERS", "")
+
     # プロンプト設定
     news_count: int = int(os.getenv("NEWS_COUNT", "20"))
 
