@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     anthropic_api_key: str = os.getenv("ANTHROPIC_API_KEY", "")
     google_api_key: str = os.getenv("GOOGLE_API_KEY", "")
     model_name: str = os.getenv("MODEL_NAME", "claude-sonnet-4-20250514")
-    max_tokens: int = int(os.getenv("MAX_TOKENS", "10000"))
+    max_tokens: int | None = int(os.getenv("MAX_TOKENS")) if os.getenv("MAX_TOKENS") else None
 
     # GitHub設定
     github_token: str = os.getenv("GITHUB_TOKEN", "")

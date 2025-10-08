@@ -3,7 +3,7 @@
 key_words:
   title: "AI技術キーワード"
   keywords: |
-    **AI技術トレンドワード**:
+    **AI技術キーワード**:
     - AGI, Artificial general intelligence
     - Multimodal AI, VLM, Vision-Language Models, VLA, Vision-Language Actions
     - LLM, ChatGPT, Claude, Gemini, Qwen, Llama, Local LLM
@@ -101,20 +101,19 @@ mcp_tools:
     **GitHub MCP ツールが利用可能な場合の追加調査手順**:
 
     - **GitHub リポジトリの直接調査**:
-      - 注目のAI/ML関連リポジトリ（Hugging Face Transformers, LangChain, AutoGPT等）の最新コミット、Issue、PRを確認
+      - 注目のAI/ML関連リポジトリの最新コミット、Issue、PRを確認
+      - [AI技術キーワード] に関連するリポジトリの最新コミット、Issue、PRを確認
       - GitHub Trending から人気急上昇中のAIプロジェクトを取得
       - スター数の多いリポジトリの最新リリースノートを確認
 
     - **OSS開発動向の詳細調査**:
       - 特定リポジトリのファイル内容を直接読み取り、新機能や変更点を確認
       - Issue/PR の議論内容から技術的な課題や解決策を抽出
-      - Dependabot や Code Security の情報から技術トレンドを把握
 
     - **企業・組織の活動調査**:
       - OpenAI, Anthropic, Google AI, Microsoft AI 等の公式 GitHub Organization の最新活動を確認
       - 研究機関や大学の GitHub リポジトリから最新研究成果を取得
 
-    **重要**: GitHub MCP ツールを使用する場合、WebSearch/WebFetch と組み合わせて、より包括的で正確な情報を収集してください。
   # slack_mcp: |
   #   **Slack MCP ツールが利用可能な場合**:
   #   - 社内の技術チャンネルから最新の議論を収集
@@ -323,3 +322,19 @@ test_report:
   title: "最新AI技術動向調査レポート（テスト用）"
   prompt: |
     あなたは最新のAI技術動向を調査する専門家です。最新のAI技術動向を調査して、レポートを作成してください。
+
+    ## 調査手順
+
+    1. **以下のMCPサーバーのみを活用して、包括的で正確な情報を収集**：
+        {mcp_tools}
+
+    ## レポート形式
+    以下の形式で詳細なレポートを作成してください：
+
+    ## 📊 最新AI技術動向レポート
+
+    ### 🔥 重要ニュース（上位{news_count}件）
+    [具体的なニュースタイトルと日付、詳細説明、URL付き]
+
+    ### レポジトリ一覧
+    [GitHub MCP サーバーで取得したレポジトリ URL 一覧]

@@ -46,16 +46,8 @@ class ClaudeCodeClient:
         try:
             logger.info(f"プロンプト: {message}")
 
-            # max_tokensに基づいて文字数制限を追加
-            if self.max_tokens is not None:
-                estimated_chars = self.max_tokens * 2  # 日本語を考慮して2倍に設定
-                token_instruction = f"\n\n**重要**: 回答は最大{self.max_tokens}トークン（約{estimated_chars}文字）以内で簡潔にまとめてください。"
-                full_message = f"{message}{token_instruction}"
-            else:
-                full_message = message
-
             # 非同期関数を同期的に実行
-            return asyncio.run(self._send_message_async(full_message, timeout))
+            return asyncio.run(self._send_message_async(message, timeout))
 
         except Exception as e:
             logger.error(f"Claude Code実行中にエラー: {e}")
@@ -92,11 +84,16 @@ class ClaudeCodeClient:
                 logger.info(f"MCP ツールを許可リストに追加: {mcp_tools}")
 
             # Claude Code SDKオプションを設定
+            env_vars = {}
+            if self.max_tokens is not None:
+                env_vars["CLAUDE_CODE_MAX_OUTPUT_TOKENS"] = str(self.max_tokens)
+
             options = ClaudeCodeOptions(
                 model=self.model_name,
                 allowed_tools=allowed_tools,
                 permission_mode="acceptEdits",
-                mcp_servers=mcp_servers if mcp_servers else None,
+                mcp_servers=mcp_servers if mcp_servers else None,  # type: ignore[arg-type]
+                env=env_vars if env_vars else {},
             )
 
             # Claude Code SDKクライアントを使用

@@ -24,7 +24,7 @@ class AITechCatchupAgent:
         enabled_mcp_servers: Optional[list] = None,
     ):
         self.model_name = model or settings.model_name
-        self.max_tokens = max_tokens or settings.max_tokens
+        self.max_tokens = max_tokens if max_tokens is not None else settings.max_tokens
         self.enabled_mcp_servers = enabled_mcp_servers or []
 
         # モデル名に基づいてクライアントを選択

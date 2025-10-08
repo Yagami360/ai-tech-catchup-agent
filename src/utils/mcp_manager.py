@@ -5,7 +5,7 @@ MCP サーバー管理モジュール - MCP サーバー設定の読み込みと
 import logging
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 import yaml
 
@@ -33,7 +33,7 @@ class MCPServerManager:
                     return {"servers": {}}
 
                 logger.info(f"MCP サーバー設定を読み込みました: {self.config_path}")
-                return config
+                return cast(Dict[str, Any], config)
 
         except yaml.YAMLError as e:
             logger.error(f"MCP サーバー設定ファイルの解析エラー: {e}")
@@ -57,11 +57,9 @@ class MCPServerManager:
 
         enabled_servers = {}
         all_servers = self.servers_config.get("servers", {})
-
         for server_name in enabled_list:
             if server_name in all_servers:
                 enabled_servers[server_name] = all_servers[server_name]
-                logger.info(f"MCP サーバー '{server_name}' を有効化しました")
             else:
                 logger.warning(f"MCP サーバー '{server_name}' が設定ファイルに見つかりません")
 
@@ -129,4 +127,5 @@ class MCPServerManager:
 
     def get_server_info(self, server_name: str) -> Optional[Dict[str, Any]]:
         """指定された MCP サーバーの情報を取得"""
-        return self.servers_config.get("servers", {}).get(server_name)
+        result = self.servers_config.get("servers", {}).get(server_name)
+        return cast(Optional[Dict[str, Any]], result)
