@@ -22,10 +22,12 @@
     - Variables<br>
         - `MODEL_NAME`: 利用するモデル名<br>
             現時点では Claude モデル（`claude-sonnet-4-20250514`, `claude-opus-4-1-20250805` など）と Gemini モデル（`gemini-2.5-flash`, `gemini-2.5-pro` など）をサポートしています
+        - `ENABLED_MCP_SERVERS`: 有効にするMCPサーバー（例: `github,huggingface`）<br>
 
     - Secrets<br>
         - `ANTHROPIC_API_KEY`: Claude モデルを使用する場合<br>
         - `GOOGLE_API_KEY`: Gemini モデルを使用する場合<br>
+        - `HF_TOKEN`: Hugging Face MCPサーバーを使用する場合（[こちら](https://huggingface.co/settings/tokens)から取得）<br>
 
 1. 一定期間間隔でワークフローが自動実行され、GitHub Issue にレポートが自動作成されます
 
@@ -62,6 +64,8 @@ make setup
 # MODEL_NAME=claude-sonnet-4-20250514
 # GITHUB_TOKEN=your_github_token_here
 # GITHUB_REPOSITORY=your_username/your_repo
+# ENABLED_MCP_SERVERS=github,huggingface
+# HF_TOKEN=your_huggingface_token_here
 # MAX_TOKENS=10000
 # NEWS_COUNT=20
 ```
@@ -93,3 +97,74 @@ make run-monthly
 | `make test` | 🧪 テストを実行 |
 | `make lint` | 🔍 コードのリンティング |
 | `make format` | ✨ コードのフォーマット |
+
+### 🔌 MCP サーバー統合
+
+AI Tech Catchup Agent は MCP (Model Context Protocol) サーバーをサポートしており、Claude モデルを使用時に外部ツールやサービスと連携できます。
+
+#### 利用可能な MCP サーバー
+
+1. **GitHub MCP Server** ✅
+   - GitHubリポジトリ、Issue、PRへの直接アクセス
+   - GitHub Trending からトレンドプロジェクトの取得
+   - Code Security アラートの確認
+
+2. **Hugging Face MCP Server** ✅
+   - 最新AIモデルの検索
+   - データセット、Space、論文の検索
+   - モデルの人気度・ダウンロード数の確認
+
+#### MCPサーバーの有効化
+
+**環境変数で設定**:
+```bash
+# .env ファイルに追加
+ENABLED_MCP_SERVERS=github,huggingface
+```
+
+**CLIで指定**:
+```bash
+# GitHub MCP サーバーを使用
+uv run python -m src.main --mcp-servers github
+
+# 複数のMCPサーバーを使用
+uv run python -m src.main --mcp-servers github,huggingface
+```
+
+#### 事前準備
+
+**GitHub MCP Server**:
+1. GitHub CLI のインストール:
+   ```bash
+   # macOS
+   brew install gh
+   
+   # Linux
+   sudo apt install gh
+   ```
+
+2. 認証:
+   ```bash
+   gh auth login
+   # または
+   export GITHUB_TOKEN="your_github_token"
+   ```
+
+**Hugging Face MCP Server**:
+1. Hugging Face トークンの取得:
+   - [Hugging Face Settings](https://huggingface.co/settings/tokens) からアクセストークンを作成
+   - トークンタイプは `read` で十分です
+
+2. 環境変数の設定:
+   ```bash
+   export HF_TOKEN="your_huggingface_token"
+   ```
+
+   または `.env` ファイルに追加:
+   ```
+   HF_TOKEN=your_huggingface_token
+   ```
+
+> **Note**: ローカル環境では初回実行時に自動的にログインプロンプトが表示されますが、CI/CD環境では`HF_TOKEN`の設定が必須です
+
+詳細は [`mcp/mcp_servers.yaml`](mcp/mcp_servers.yaml) を参照してください。

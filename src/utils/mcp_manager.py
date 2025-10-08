@@ -91,11 +91,18 @@ class MCPServerManager:
                         env[key] = value
 
             # MCP サーバー設定を構築
+            server_type = server_config.get("type", "stdio")
             mcp_config[server_name] = {
-                "type": server_config.get("type", "stdio"),
-                "command": server_config.get("command"),
-                "args": server_config.get("args", []),
+                "type": server_type,
             }
+
+            # stdio タイプの場合: command と args が必要
+            if server_type == "stdio":
+                mcp_config[server_name]["command"] = server_config.get("command")
+                mcp_config[server_name]["args"] = server_config.get("args", [])
+            # sse/http タイプの場合: url が必要
+            elif server_type in ("sse", "http"):
+                mcp_config[server_name]["url"] = server_config.get("url")
 
             if env:
                 mcp_config[server_name]["env"] = env

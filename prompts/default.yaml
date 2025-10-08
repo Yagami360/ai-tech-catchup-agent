@@ -1,11 +1,11 @@
 # AI Tech Catchup Agent プロンプト設定
 
 key_words:
-  title: "AI技術キーワード"
+  title: "[AI技術キーワード]"
   keywords: |
-    **AI技術キーワード**:
+    **[AI技術キーワード]**:
     - AGI, Artificial general intelligence
-    - Multimodal AI, VLM, Vision-Language Models, VLA, Vision-Language Actions
+    - Generative AI, Multimodal AI, VLM, Vision-Language Models, VLA, Vision-Language Actions
     - LLM, ChatGPT, Claude, Gemini, Qwen, Llama, Local LLM
     - AI Agent, Multi-Agent Systems, RAG, Retrieval-Augmented Generation, MCP server
     - Vibe Coding, AI Code Generation
@@ -98,7 +98,9 @@ key_urls:
 mcp_tools:
   title: "MCP ツール利用ガイド"
   github_mcp: |
-    **GitHub MCP ツールが利用可能な場合の追加調査手順**:
+    **GitHub MCP サーバーが利用可能な場合の追加調査手順**:
+
+    GitHub MCP サーバーを使用して、以下の調査を行ってください
 
     - **GitHub リポジトリの直接調査**:
       - 注目のAI/ML関連リポジトリの最新コミット、Issue、PRを確認
@@ -113,17 +115,31 @@ mcp_tools:
     - **企業・組織の活動調査**:
       - OpenAI, Anthropic, Google AI, Microsoft AI 等の公式 GitHub Organization の最新活動を確認
       - 研究機関や大学の GitHub リポジトリから最新研究成果を取得
+  huggingface_mcp: |
+    **Hugging Face MCP サーバーが利用可能な場合の追加調査手順**:
 
-  # slack_mcp: |
-  #   **Slack MCP ツールが利用可能な場合**:
-  #   - 社内の技術チャンネルから最新の議論を収集
-  #   - エンジニアの反応や意見を参考情報として活用
-  #   - チーム内で共有された技術記事や知見を確認
+    Hugging Face MCP サーバーを使用して、以下の調査を行ってください
+
+    - **最新AIモデルの調査**:
+      - [AI技術キーワード] に関連する最新のモデルを Hugging Face Model で検索
+      - 日本語対応モデル、マルチモーダルモデルなど特定用途のモデルを Hugging Face Model で検索
+      - モデルのダウンロード数、いいね数、更新日から人気度を把握
+
+    - **最新データセットの調査**:
+      - [AI技術キーワード] に関連する最新の公開データセット、ベンチマークデータセットを Hugging Face Dataset で検索
+
+    - **最新Hugging Face Space の調査**:
+      - [AI技術キーワード] に関連する最新のデモアプリケーション、実験的プロジェクトを Hugging Face Space で検索
+      - 注目のSpace（スター数、使用状況）から技術トレンドを把握
+
+    - **最新論文・研究動向の調査**:
+      - [AI技術キーワード] に関連する最新の研究論文を Hugging Face Paper で検索
+      - 論文の概要、先行研究と比べてどこがすごいのか？特定技術領域の論文動向などを確認
 
 report:
   title: "最新AI技術動向調査レポート"
   prompt: |
-    あなたは最新のAI技術動向を調査する専門家です。**Web Search機能とWebFetch機能などを活用して**、以下の情報源を**優先的に**調査し、必要に応じてその他の関連URLも調査して、リアルタイムの情報を提供してください：
+    あなたは最新のAI技術動向を調査する専門家です。**Web Search機能・WebFetch機能・MCPサーバーなどを活用して**、以下の情報源を**優先的に**調査し、必要に応じてその他の関連URLも調査して、リアルタイムの情報を提供してください：
 
     ## 調査手順
     1. **{key_urls} の優先情報源から最新情報を収集**：
@@ -193,7 +209,7 @@ report:
 weekly_report:
   title: "週次レポート"
   prompt: |
-    {week_period}のAI技術動向について、**Web Search機能とWebFetch機能などを活用して**、以下の情報源を**優先的に**調査し、必要に応じてその他の関連URLも調査して包括的なレポートを作成してください。
+    {week_period}のAI技術動向について、**Web Search機能・WebFetch機能・MCPサーバーなどを活用して**、以下の情報源を**優先的に**調査し、必要に応じてその他の関連URLも調査して包括的なレポートを作成してください。
 
     ## 調査手順
     1. **{key_urls} の優先情報源から最新情報を収集**：
@@ -257,7 +273,7 @@ weekly_report:
 monthly_report:
   title: "月次レポート"
   prompt: |
-    {month_period}のAI技術動向を振り返り、**Web Search機能とWebFetch機能などを活用して**、重要な変化と今後の展望をまとめた月次レポートを作成してください。
+    {month_period}のAI技術動向を振り返り、**Web Search機能・WebFetch機能・MCPサーバーなどを活用して**、重要な変化と今後の展望をまとめた月次レポートを作成してください。
 
     ## 調査手順
     1. **{key_urls} の優先情報源から最新情報を収集**：
@@ -333,8 +349,14 @@ test_report:
 
     ## 📊 最新AI技術動向レポート
 
+    ### GitHub MCP サーバーでの取得情報
+    [GitHub MCP サーバーで取得したレポジトリ一覧]
+
+    ### Hugging Face MCP サーバーでの取得情報
+    [Hugging Face MCP サーバーで取得したモデル一覧]
+    [Hugging Face MCP サーバーで取得したデータセット一覧]
+    [Hugging Face MCP サーバーで取得したSpace一覧]
+    [Hugging Face MCP サーバーで取得したPaper一覧]
+
     ### 🔥 重要ニュース（上位{news_count}件）
     [具体的なニュースタイトルと日付、詳細説明、URL付き]
-
-    ### レポジトリ一覧
-    [GitHub MCP サーバーで取得したレポジトリ URL 一覧]

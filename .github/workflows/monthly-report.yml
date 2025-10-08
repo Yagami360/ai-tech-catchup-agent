@@ -54,10 +54,12 @@ jobs:
       - name: Run AI Tech Catchup Agent
         env:
           MODEL_NAME: ${{ vars.MODEL_NAME }}
+          ENABLED_MCP_SERVERS: ${{ vars.ENABLED_MCP_SERVERS }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           make run-monthly
 
