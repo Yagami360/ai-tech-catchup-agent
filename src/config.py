@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     google_api_key: str = os.getenv("GOOGLE_API_KEY", "")
     model_name: str = os.getenv("MODEL_NAME", "claude-sonnet-4-20250514")
     max_tokens: Optional[int] = (
-        int(os.getenv("MAX_TOKENS")) if os.getenv("MAX_TOKENS") else None
+        int(os.getenv("MAX_TOKENS")) if os.getenv("MAX_TOKENS") else None  # type: ignore[arg-type]
     )
 
     # GitHub設定
