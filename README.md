@@ -4,13 +4,15 @@
 [![Daily Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml)
 [![Weekly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml)
 [![Monthly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
+[![Topic Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/topic-report.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/topic-report.yml)
 [![Claude](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/claude.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/claude.yml)
 
-最新AI技術の最新/週次/月次レポートを GitHub Issue で自動作成する AI Agent です。
+最新AI技術の最新/週次/月次レポート、および特定トピックのレポートを GitHub Issue で自動作成する AI Agent です。
 
 - [📅 最新レポート](https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Areport)
 - [📊 週次レポート](https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Aweekly-report)
 - [📈 月次レポート](https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Amonthly-report)
+- [🎯 トピック別レポート](https://github.com/Yagami360/ai-tech-catchup-agent/issues?q=is%3Aissue%20state%3Aopen%20label%3Atopic-report)
 
 
 ## 🚀 使用方法
@@ -36,6 +38,8 @@
     - [📅 最新レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/daily-report.yml)
     - [📊 週次レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/weekly-report.yml)
     - [📈 月次レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
+    - [🎯 トピック別レポートのワークフロー](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/topic-report.yml)
+        - `Run workflow` をクリックして、調査したいトピック名を入力してください（例: `AI Agent`, `Vision-Language Models`, `PhysicalAI`）
 
 ### 💻 ローカル環境で動かす場合
 
@@ -81,6 +85,9 @@ make run-weekly
 
 # 📈 月次レポート作成
 make run-monthly
+
+# 🎯 トピック別レポート作成
+make run-topic TOPIC="AI Agent"
 ```
 
 ## 👨‍💻 開発者向け情報
@@ -94,6 +101,7 @@ make run-monthly
 | `make run` | 📰 最新レポート作成 |
 | `make run-weekly` | 📊 週次レポート生成 |
 | `make run-monthly` | 📈 月次レポート生成 |
+| `make run-topic TOPIC="トピック名"` | 🎯 トピック別レポート生成 |
 | `make test` | 🧪 テストを実行 |
 | `make lint` | 🔍 コードのリンティング |
 | `make format` | ✨ コードのフォーマット |

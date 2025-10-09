@@ -31,8 +31,8 @@ def main() -> None:
     parser.add_argument(
         "mode",
         nargs="?",
-        choices=["weekly", "monthly", "test"],
-        help="レポートモード (weekly: 週次, monthly: 月次, test: テスト。指定なし: 最新)",
+        choices=["weekly", "monthly", "topic", "test"],
+        help="レポートモード (weekly: 週次, monthly: 月次, topic: トピック別, test: テスト。指定なし: 最新)",
     )
     parser.add_argument(
         "--model",
@@ -53,6 +53,12 @@ def main() -> None:
         type=int,
         default=None,
         help=f"重要ニュースの件数 (デフォルト: {settings.news_count})",
+    )
+    parser.add_argument(
+        "--topic",
+        type=str,
+        default=None,
+        help="トピック別レポートのトピック名（例: RAG, Claude Code, Vision-Language Models）",
     )
     parser.add_argument(
         "--no-issue",
@@ -85,6 +91,11 @@ def main() -> None:
         result = agent.weekly_report(create_issue=create_issue)
     elif args.mode == "monthly":
         result = agent.monthly_report(create_issue=create_issue)
+    elif args.mode == "topic":
+        if not args.topic:
+            logger.error("トピックモードを使用する場合は --topic オプションでトピック名を指定してください")
+            sys.exit(1)
+        result = agent.topic_report(topic=args.topic, create_issue=create_issue, news_count=args.news_count)
     elif args.mode == "test":
         result = agent.run_catchup(create_issue=create_issue, news_count=args.news_count, test_mode=True)
     else:
