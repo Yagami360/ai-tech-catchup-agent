@@ -1,4 +1,4 @@
-.PHONY: install setup run run-weekly run-monthly test lint format format-check
+.PHONY: install setup run run-weekly run-monthly run-topic test lint format format-check
 
 # Install dependencies
 install:
@@ -23,6 +23,17 @@ run-weekly: install
 # Run AI Agent for monthly report
 run-monthly: install
 	uv run python -m src.main monthly
+
+# Run AI Agent for topic report
+# Usage: make run-topic TOPIC="RAG"
+TOPIC ?= ""
+run-topic: install
+	@if [ -z "$(TOPIC)" ]; then \
+		echo "Error: Please specify TOPIC. Usage: make run-topic TOPIC=\"your topic\""; \
+		exit 1; \
+	fi
+	@echo "Running topic report for: $(TOPIC)"
+	uv run python -m src.main topic --topic "$(TOPIC)"
 
 # Run AI Agent with test mode
 # TEST_MODEL ?= claude-3-5-haiku-20241022

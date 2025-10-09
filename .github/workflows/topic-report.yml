@@ -1,10 +1,12 @@
-name: Weekly Report
+name: Topic Report
 
 on:
   workflow_dispatch:
-  schedule:
-    # 毎週金曜日 9:00 (JST)
-    - cron: '0 0 * * 5'
+    inputs:
+      topic:
+        description: 'レポート対象のトピック名（例: AI Agent, Vision-Language Models etc...）'
+        required: true
+        type: string
 
 jobs:
   ai-tech-catchup:
@@ -51,9 +53,9 @@ jobs:
         run: |
           uv sync --frozen
 
-      - name: Run AI Tech Catchup Agent
+      - name: Run AI Tech Catchup Agent (Topic Report)
         run: |
-          make run-weekly
+          make run-topic TOPIC="${{ inputs.topic }}"
         env:
           MODEL_NAME: ${{ vars.MODEL_NAME }}
           ENABLED_MCP_SERVERS: ${{ vars.ENABLED_MCP_SERVERS }}
@@ -70,4 +72,6 @@ jobs:
           echo "- **実行日時**: $(date)" >> $GITHUB_STEP_SUMMARY
           echo "- **リポジトリ**: ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
           echo "- **ワークフロー**: ${{ github.workflow }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **トピック**: ${{ inputs.topic }}" >> $GITHUB_STEP_SUMMARY
           echo "- **実行結果**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+

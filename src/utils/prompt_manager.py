@@ -146,6 +146,9 @@ class PromptManager:
             # MCP指示が含まれている場合は置換
             if "{mcp_tools}" in prompt_text and "mcp_tools" in kwargs:
                 prompt_text = prompt_text.replace("{mcp_tools}", kwargs["mcp_tools"])
+            # トピックが含まれている場合は置換
+            if "{topic}" in prompt_text and "topic" in kwargs:
+                prompt_text = prompt_text.replace("{topic}", kwargs["topic"])
             return str(prompt_text)
         else:
             logger.error(f"プロンプト設定が無効です: {prompt_type}")
