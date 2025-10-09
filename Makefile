@@ -29,12 +29,8 @@ run-monthly: install
 TEST_MODEL ?= gemini-2.0-flash-lite
 # TEST_MODEL ?= gemini-2.5-flash
 test: install
-	@echo "Running report test..."
-	uv run python -m src.main --model $(TEST_MODEL) --max-tokens 50 --news-count 1 --no-issue
-	@echo "Running weekly report test..."
-	uv run python -m src.main weekly --model $(TEST_MODEL) --max-tokens 50 --news-count 1 --no-issue
-	@echo "Running monthly report test..."
-	uv run python -m src.main monthly --model $(TEST_MODEL) --max-tokens 50 --news-count 1 --no-issue
+	@echo "Running test report..."
+	uv run python -m src.main test --model $(TEST_MODEL) --max-tokens 100 --news-count 1 --no-issue --mcp-servers github,huggingface
 
 # Run code linting
 lint: install

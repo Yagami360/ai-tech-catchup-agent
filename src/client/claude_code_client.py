@@ -1,9 +1,11 @@
 import asyncio
 import logging
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 from claude_code_sdk import ClaudeCodeOptions, ClaudeSDKClient
+
+from ..utils import MCPServerManager
 
 logger = logging.getLogger(__name__)
 
@@ -11,16 +13,24 @@ logger = logging.getLogger(__name__)
 class ClaudeCodeClient:
     """Claude Code Client クラス"""
 
-    def __init__(self, model_name: str = "claude-sonnet-4-20250514", max_tokens: int | None = None):
+    def __init__(
+        self,
+        model_name: str = "claude-sonnet-4-20250514",
+        max_tokens: int | None = None,
+        enabled_mcp_servers: Optional[List[str]] = None,
+    ):
         """
         Claude Code Client を初期化
 
         Args:
             model_name: 使用するモデル名（デフォルト: claude-sonnet-4-20250514）
             max_tokens: 最大トークン数（デフォルト: None）
+            enabled_mcp_servers: 有効にする MCP サーバー名のリスト（例: ["github", "filesystem"]）
         """
         self.model_name = model_name
         self.max_tokens = max_tokens
+        self.enabled_mcp_servers = enabled_mcp_servers or []
+        self.mcp_manager = MCPServerManager()
 
     def send_message(self, message: str, timeout: int = 3600) -> Dict[str, Any]:
         """
@@ -36,16 +46,8 @@ class ClaudeCodeClient:
         try:
             logger.info(f"プロンプト: {message}")
 
-            # max_tokensに基づいて文字数制限を追加
-            if self.max_tokens is not None:
-                estimated_chars = self.max_tokens * 2  # 日本語を考慮して2倍に設定
-                token_instruction = f"\n\n**重要**: 回答は最大{self.max_tokens}トークン（約{estimated_chars}文字）以内で簡潔にまとめてください。"
-                full_message = f"{message}{token_instruction}"
-            else:
-                full_message = message
-
             # 非同期関数を同期的に実行
-            return asyncio.run(self._send_message_async(full_message, timeout))
+            return asyncio.run(self._send_message_async(message, timeout))
 
         except Exception as e:
             logger.error(f"Claude Code実行中にエラー: {e}")
@@ -67,11 +69,31 @@ class ClaudeCodeClient:
             Claude Codeからの応答
         """
         try:
+            # 基本的な許可ツール
+            allowed_tools = ["WebSearch", "WebFetch", "Read", "Bash"]
+
+            # MCP サーバー設定を構築
+            mcp_servers = {}
+            if self.enabled_mcp_servers:
+                logger.info(f"MCP サーバーを有効化: {', '.join(self.enabled_mcp_servers)}")
+                mcp_servers = self.mcp_manager.build_mcp_config(self.enabled_mcp_servers)
+
+                # 有効な MCP サーバーのツールを許可リストに追加
+                mcp_tools = self.mcp_manager.get_allowed_tools(self.enabled_mcp_servers)
+                allowed_tools.extend(mcp_tools)
+                logger.info(f"MCP ツールを許可リストに追加: {mcp_tools}")
+
             # Claude Code SDKオプションを設定
+            env_vars = {}
+            if self.max_tokens is not None:
+                env_vars["CLAUDE_CODE_MAX_OUTPUT_TOKENS"] = str(self.max_tokens)
+
             options = ClaudeCodeOptions(
                 model=self.model_name,
-                allowed_tools=["WebSearch", "WebFetch", "Read", "Bash"],
+                allowed_tools=allowed_tools,
                 permission_mode="acceptEdits",
+                mcp_servers=mcp_servers if mcp_servers else None,  # type: ignore[arg-type]
+                env=env_vars if env_vars else {},
             )
 
             # Claude Code SDKクライアントを使用

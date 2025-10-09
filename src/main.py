@@ -31,8 +31,8 @@ def main() -> None:
     parser.add_argument(
         "mode",
         nargs="?",
-        choices=["weekly", "monthly"],
-        help="レポートモード (weekly: 週次, monthly: 月次。指定なし: 最新)",
+        choices=["weekly", "monthly", "test"],
+        help="レポートモード (weekly: 週次, monthly: 月次, test: テスト。指定なし: 最新)",
     )
     parser.add_argument(
         "--model",
@@ -59,17 +59,36 @@ def main() -> None:
         action="store_true",
         help="GitHub Issueを作成しない",
     )
+    parser.add_argument(
+        "--mcp-servers",
+        type=str,
+        default=None,
+        help="有効にする MCP サーバー（カンマ区切り、例: github,slack",
+    )
     args = parser.parse_args()
     create_issue = not args.no_issue
 
+    # MCP サーバーの有効化（CLI引数または環境変数）
+    enabled_mcp_servers = []
+    if args.mcp_servers:
+        enabled_mcp_servers = [s.strip() for s in args.mcp_servers.split(",")]
+    elif settings.enabled_mcp_servers:
+        enabled_mcp_servers = [s.strip() for s in settings.enabled_mcp_servers.split(",")]
+
     # Agent 実行
-    agent = AITechCatchupAgent(model=args.model, max_tokens=args.max_tokens)
+    agent = AITechCatchupAgent(
+        model=args.model,
+        max_tokens=args.max_tokens,
+        enabled_mcp_servers=enabled_mcp_servers,
+    )
     if args.mode == "weekly":
         result = agent.weekly_report(create_issue=create_issue)
     elif args.mode == "monthly":
         result = agent.monthly_report(create_issue=create_issue)
+    elif args.mode == "test":
+        result = agent.run_catchup(create_issue=create_issue, news_count=args.news_count, test_mode=True)
     else:
-        result = agent.run_catchup(create_issue=create_issue, news_count=args.news_count)
+        result = agent.run_catchup(create_issue=create_issue, news_count=args.news_count, test_mode=False)
 
     # 結果を出力
     logger.info(f"実行結果: {result}")
