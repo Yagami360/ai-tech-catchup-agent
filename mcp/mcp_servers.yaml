@@ -10,7 +10,7 @@ servers:
       - "-y"
       - "@github/github-mcp-server"
     env:
-      GITHUB_TOKEN: "${GITHUB_TOKEN}"  # 環境変数から取得
+      GITHUB_TOKEN: "${GITHUB_TOKEN}"
     allowed_tools:
       - "mcp__github__*"
     description: "GitHub リポジトリ、Issue、PR の操作"
@@ -23,10 +23,10 @@ servers:
       - "git+https://github.com/davanstrien/hub-semantic-search-mcp.git"
     env:
       HF_SEARCH_API_URL: "https://davanstrien-huggingface-datasets-search-v2.hf.space"
-      HF_TOKEN: "${HF_TOKEN}"  # 環境変数から取得（CI/CD環境で必須）
+      HF_TOKEN: "${HF_TOKEN}"
     allowed_tools:
       - "mcp__huggingface__*"
-    description: "Hugging Face のモデル、データセットをセマンティック検索で探す (11 tools: search_models, find_similar_models, get_trending_models, get_model_info, get_model_safetensors_metadata, download_model_card, search_datasets, find_similar_datasets, get_trending_datasets, get_dataset_info, download_dataset_card)"
+    description: "Hugging Face Hub のリソースを検索・取得"
 
   # slack:
   #   name: "Slack MCP Server"
