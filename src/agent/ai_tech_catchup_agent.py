@@ -289,7 +289,7 @@ class AITechCatchupAgent:
                 issue_result = self.github_client.create_issue(
                     title=f"🎯 AI Tech Catchup Topic Report: {topic} - {datetime.now().strftime('%Y-%m-%d')}",
                     body=issue_body,
-                    labels=["topic-report", self.model_name, topic],
+                    labels=["topic-report", self.model_name],
                 )
                 if issue_result.get("html_url"):
                     result["issue_url"] = issue_result.get("html_url", "")
