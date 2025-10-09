@@ -291,7 +291,7 @@ class AITechCatchupAgent:
 - 使用モデル: `{self.model_name}`
 - トピック: `{topic}`
 
-> **💡 質疑応答について**  
+> **💡 質疑応答について**
 > このレポート内容について質問したい場合は、コメントで `@claude` または `@gemini-cli` とメンションすると、AI が自動的に回答します。
 
 ---
