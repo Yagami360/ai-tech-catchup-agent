@@ -89,6 +89,10 @@ class AITechCatchupAgent:
 
 - レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
 - 使用モデル: `{self.model_name}`
+
+> **💡 質疑応答について**
+> このレポート内容について質問したい場合は、コメントで `@claude` または `@gemini-cli` とメンションすると、AI が自動的に回答します。
+
 ---
 
 {search_result["content"]}
@@ -158,6 +162,10 @@ class AITechCatchupAgent:
 - レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
 - 調査期間: `{week_period}`
 - 使用モデル: `{self.model_name}`
+
+> **💡 質疑応答について**
+> このレポート内容について質問したい場合は、コメントで `@claude` または `@gemini-cli` とメンションすると、AI が自動的に回答します。
+
 ---
 
 {search_result["content"]}
@@ -218,6 +226,10 @@ class AITechCatchupAgent:
 - レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
 - 調査期間: `{month_period}`
 - 使用モデル: `{self.model_name}`
+
+> **💡 質疑応答について**
+> このレポート内容について質問したい場合は、コメントで `@claude` または `@gemini-cli` とメンションすると、AI が自動的に回答します。
+
 ---
 
 {search_result["content"]}
@@ -278,6 +290,10 @@ class AITechCatchupAgent:
 - レポート日時: `{datetime.now().strftime("%Y-%m-%d %H:%M")}`
 - 使用モデル: `{self.model_name}`
 - トピック: `{topic}`
+
+> **💡 質疑応答について**
+> このレポート内容について質問したい場合は、コメントで `@claude` または `@gemini-cli` とメンションすると、AI が自動的に回答します。
+
 ---
 
 {search_result["content"]}

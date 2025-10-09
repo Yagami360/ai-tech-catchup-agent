@@ -6,6 +6,7 @@
 [![Monthly Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/monthly-report.yml)
 [![Topic Report](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/topic-report.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/topic-report.yml)
 [![Claude](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/claude.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/claude.yml)
+[![Gemini CLI](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/genimi.yml/badge.svg)](https://github.com/Yagami360/ai-tech-catchup-agent/actions/workflows/genimi.yml)
 
 最新AI技術の最新/週次/月次レポート、および特定トピックのレポートを GitHub Issue で自動作成する AI Agent です。
 
@@ -29,6 +30,7 @@
     - Secrets<br>
         - `ANTHROPIC_API_KEY`: Claude モデルを使用する場合<br>
         - `GOOGLE_API_KEY`: Gemini モデルを使用する場合<br>
+        - `GEMINI_API_KEY`: Gemini CLI を使用する場合（[Google AI Studio](https://makersuite.google.com/app/apikey) から取得）<br>
         - `HF_TOKEN`: Hugging Face MCPサーバーを使用する場合（[こちら](https://huggingface.co/settings/tokens)から取得）<br>
 
 1. 一定期間間隔でワークフローが自動実行され、GitHub Issue にレポートが自動作成されます
@@ -89,6 +91,37 @@ make run-monthly
 # 🎯 トピック別レポート作成
 make run-topic TOPIC="AI Agent"
 ```
+
+### 🤖 レポート内容の質疑応答する
+
+作成された Issue レポートの内容について、AI モデルと質疑応答することもできます。
+
+#### Claude と質疑応答する
+
+Issue や PR のコメントで `@claude` とメンションすると、Claude が自動的に日本語で応答します。
+
+**使用例：**
+```
+@claude この中で最も重要なニュースは何ですか?
+@claude OpenAI の最新情報について詳しく教えてください
+@claude このレポートの要点を3つにまとめてください
+```
+
+#### Gemini と質疑応答する
+
+Issue や PR のコメントで `@gemini-cli` とメンションすると、Gemini が自動的に日本語で応答します。
+
+**使用例：**
+```
+@gemini-cli Multi-Agent System の実装例を教えてください
+@gemini-cli この技術のユースケースは何ですか?
+@gemini-cli 今後のトレンドについて教えてください
+```
+
+> **Note**: 
+> - Claude は `@claude` メンション、Gemini は `@gemini-cli` メンションで呼び出します
+> - どちらも Issue コメントおよび PR コメントで利用可能です
+> - レポート Issue の内容を理解した上で回答します
 
 ## 👨‍💻 開発者向け情報
 
