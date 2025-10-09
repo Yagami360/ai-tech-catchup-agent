@@ -25,7 +25,5 @@ jobs:
       - uses: google-github-actions/run-gemini-cli@v0
         with:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          # pr-review or issue-triage or on-demand
-          workflow: on-demand
           prompt: |-
             必ず日本語で回答し、具体的で検証可能な情報を提供してください。
