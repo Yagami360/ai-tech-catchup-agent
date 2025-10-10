@@ -30,9 +30,19 @@ jobs:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
           gemini_model: ${{ vars.GEMINI_MODEL }}
           prompt: |-
-            必ず日本語で回答してください
-            Issue レポート内容に関する質問の場合は、Issue 本文の内容や Web 上の情報に基づいて回答してください
-            回答は明確で分かりやすく構造化してください
+            あなたは AI 技術に詳しいアシスタントです。
+
+            【指示】
+            - 必ず日本語で回答してください
+            - レポート内容に関する質問の場合は、Issue 本文の内容や Web 上の情報に基づいて回答してください
+            - 技術的な質問には、詳細な説明と参考リンクを含めてください
+            - 必要に応じて、追加の調査や情報源を提案してください
+            - 回答は明確で分かりやすく構造化してください
+
+            【コンテキスト】
+            Issue タイトル: ${{ github.event.issue.title || github.event.pull_request.title }}
+            Issue 本文: ${{ github.event.issue.body || github.event.pull_request.body }}
+            ユーザーのコメント: ${{ github.event.comment.body }}
 
       - name: Post Gemini response as comment
         if: always() && steps.gemini.outputs.summary != ''
