@@ -19,7 +19,8 @@ on:
 
 env:
   # test を実行すると API 利用料が発生するのでデフォルトで実行しない
-  RUN_TESTS: false
+  # RUN_TESTS: false
+  RUN_TESTS: true
 
 jobs:
   ci:
@@ -55,4 +56,9 @@ jobs:
         if: env.RUN_TESTS == 'true'
         run: make test
         env:
+          ENABLED_MCP_SERVERS: ${{ vars.ENABLED_MCP_SERVERS }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}

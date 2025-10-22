@@ -55,7 +55,7 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 ignore_missing_imports = true
-exclude = [".venv/", "venv/", "__pycache__/", ".git/", ".mypy_cache/", ".pytest_cache/"]
+exclude = [".venv/", "venv/", "__pycache__/", ".git/", ".mypy_cache/", ".pytest_cache/", ".old/", ".debug/", ".logs/"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

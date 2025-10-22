@@ -94,7 +94,12 @@ class PromptManager:
 
         # ニュース件数を動的に設定
         if "news_count" not in kwargs:
-            kwargs["news_count"] = str(settings.news_count)
+            # 1. 環境変数でレポートタイプ別の設定があればそれを使用
+            if hasattr(settings, f"news_count_{prompt_type}"):
+                kwargs["news_count"] = str(getattr(settings, f"news_count_{prompt_type}"))
+            # 2. フォールバック: デフォルト値を使用
+            else:
+                kwargs["news_count"] = str(settings.news_count)
 
         # 現在の年号を動的に設定
         if "current_year" not in kwargs:
