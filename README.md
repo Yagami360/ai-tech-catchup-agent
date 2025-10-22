@@ -26,7 +26,6 @@
         - `MODEL_NAME`: 利用するモデル名<br>
             現時点では Claude モデル（`claude-sonnet-4-20250514`, `claude-opus-4-1-20250805` など）と Gemini モデル（`gemini-2.5-flash`, `gemini-2.5-pro` など）をサポートしています
         - `ENABLED_MCP_SERVERS`: 有効にするMCPサーバー（例: `github,huggingface`）<br>
-        - `DEEP_RESEARCH`: Deep Research を有効化する場合は `true` を設定（Gemini モデルのみ対応、デフォルト: `false`）<br>
 
     - Secrets<br>
         - `ANTHROPIC_API_KEY`: Claude モデルを使用する場合<br>
@@ -79,7 +78,6 @@ make setup
 # NEWS_COUNT_MONTHLY_REPORT=20
 # NEWS_COUNT_TOPIC_REPORT=10
 # NEWS_COUNT_TEST_REPORT=1
-# DEEP_RESEARCH=false  # Deep Research を有効化する場合は true（Gemini モデルのみ対応）
 ```
 
 #### 3️⃣ 実行
@@ -215,46 +213,3 @@ uv run python -m src.main --mcp-servers github,huggingface
 > **Note**: ローカル環境では初回実行時に自動的にログインプロンプトが表示されますが、CI/CD環境では`HF_TOKEN`の設定が必須です
 
 詳細は [`mcp/mcp_servers.yaml`](mcp/mcp_servers.yaml) を参照してください。
-
-### 🔬 Deep Research (Gemini)
-
-Gemini モデルでは、Deep Research 機能を利用できます。この機能により、Gemini が複数の検索クエリを自動生成し、ウェブから包括的な情報を収集して、より詳細で高品質な分析を行います。
-
-#### Deep Research の有効化
-
-**環境変数で設定**:
-```bash
-# .env ファイルに追加
-DEEP_RESEARCH=true
-```
-
-**CLI で指定**:
-```bash
-# Deep Research を有効化
-uv run python -m src.main --deep-research
-
-# Gemini モデルと組み合わせて使用
-uv run python -m src.main --model gemini-2.5-pro --deep-research
-```
-
-**GitHub Actions で設定**:
-Variables に `DEEP_RESEARCH=true` を追加
-
-#### 特徴
-
-- 🔍 **包括的な調査**: 複数の検索クエリを自動生成し、多角的に情報を収集
-- 📊 **高品質な分析**: より深い洞察と詳細な分析結果を提供
-- 🌐 **動的な情報取得**: リアルタイムのウェブ情報に基づいた最新の分析
-- ⏱️ **処理時間**: 通常モードより実行時間が長くなります
-
-#### 推奨モデル
-
-Deep Research は以下の Gemini モデルで特に効果的です：
-- `gemini-2.5-pro`: 最高品質の分析が必要な場合
-- `gemini-2.5-flash`: 高速でバランスの取れた分析が必要な場合
-- `gemini-2.0-flash-thinking-exp`: 推論を伴う深い分析が必要な場合
-
-> **Note**: 
-> - Deep Research は Gemini モデルでのみ利用可能です
-> - Claude モデルではサポートされていません（MCPサーバーを使用してください）
-> - 簡単なタスクでは通常モード（`DEEP_RESEARCH=false`）で十分です
