@@ -7,6 +7,11 @@ on:
         description: 'レポート対象のトピック名（例: AI Agent, Vision-Language Models etc...）'
         required: true
         type: string
+      news_count:
+        description: '取得するニュースの件数'
+        required: false
+        type: number
+        default: 10
 
 jobs:
   ai-tech-catchup:
@@ -64,6 +69,7 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          NEWS_COUNT_TOPIC_REPORT: ${{ inputs.news_count || vars.NEWS_COUNT_TOPIC_REPORT }}
 
       - name: Create summary
         if: always()
@@ -74,4 +80,3 @@ jobs:
           echo "- **ワークフロー**: ${{ github.workflow }}" >> $GITHUB_STEP_SUMMARY
           echo "- **トピック**: ${{ inputs.topic }}" >> $GITHUB_STEP_SUMMARY
           echo "- **実行結果**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-

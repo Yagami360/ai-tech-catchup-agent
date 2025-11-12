@@ -19,8 +19,8 @@ on:
 
 env:
   # test を実行すると API 利用料が発生するのでデフォルトで実行しない
-  # RUN_TESTS: false
-  RUN_TESTS: true
+  RUN_TESTS: false
+  # RUN_TESTS: true
 
 jobs:
   ci:

@@ -2,6 +2,12 @@ name: Weekly Report
 
 on:
   workflow_dispatch:
+    inputs:
+      news_count:
+        description: '取得するニュースの件数'
+        required: false
+        type: number
+        default: 10
   schedule:
     # 毎週金曜日 9:00 (JST)
     - cron: '0 0 * * 5'
@@ -62,6 +68,7 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          NEWS_COUNT_WEEKLY_REPORT: ${{ inputs.news_count || vars.NEWS_COUNT_WEEKLY_REPORT }}
 
       - name: Create summary
         if: always()
