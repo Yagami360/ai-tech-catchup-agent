@@ -68,7 +68,7 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          NEWS_COUNT_REPORT: ${{ inputs.news_count || vars.NEWS_COUNT }}
+          NEWS_COUNT_REPORT: ${{ inputs.news_count || vars.NEWS_COUNT_REPORT }}
 
       - name: Create summary
         if: always()
