@@ -36,6 +36,10 @@ class Settings(BaseSettings):
     news_count_test_report: int = int(os.getenv("NEWS_COUNT_TEST_REPORT", "1"))
     news_count_topic_report: int = int(os.getenv("NEWS_COUNT_TOPIC_REPORT", "10"))
 
+    # Google ADK設定
+    # Google ADKで使用するモデル（環境変数で上書き可能、デフォルトはMODEL_NAMEを使用）
+    adk_model_name: str = os.getenv("ADK_MODEL_NAME", os.getenv("MODEL_NAME", "gemini-2.5-flash"))
+
     model_config = {"env_file": ".env", "extra": "ignore"}
 
 

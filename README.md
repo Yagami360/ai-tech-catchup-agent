@@ -67,7 +67,8 @@ make setup
 # .envファイルを編集してAPIキーを設定
 # ANTHROPIC_API_KEY=your_anthropic_api_key_here
 # GOOGLE_API_KEY=your_google_api_key_here
-# MODEL_NAME=claude-sonnet-4-20250514
+# MODEL_NAME=claude-sonnet-4-20250514  # 通常版で使用するモデル
+# ADK_MODEL_NAME=gemini-2.5-flash      # Google ADK版で使用するモデル（省略時はMODEL_NAMEを使用）
 # GITHUB_TOKEN=your_github_token_here
 # GITHUB_REPOSITORY=your_username/your_repo
 # ENABLED_MCP_SERVERS=github,huggingface
@@ -82,6 +83,8 @@ make setup
 
 #### 3️⃣ 実行
 
+##### 通常版（Python CLI）
+
 ```bash
 # 📰 最新レポート作成
 make run
@@ -94,6 +97,40 @@ make run-monthly
 
 # 🎯 トピック別レポート作成
 make run-topic TOPIC="AI Agent"
+```
+
+##### Google ADK版
+
+```bash
+# 📰 最新レポート作成
+make run-adk
+
+# 📊 週次レポート作成
+make run-adk-weekly
+
+# 📈 月次レポート作成
+make run-adk-monthly
+
+# 🎯 トピック別レポート作成
+make run-adk-topic TOPIC="AI Agent"
+
+# 💬 対話型モード（必要な場合のみ）
+make run-adk-interactive
+```
+
+**Google ADK版の特徴:**
+- ⚡ デフォルトで非対話型（ワンショット実行）
+- 🤖 Google Geminiモデルを使用
+- 🔧 柔軟なパラメータ指定（ニュース件数、Issue作成有無など）
+- ⚙️ 環境変数で設定可能（`ADK_MODEL_NAME`, `MAX_TOKENS`, `NEWS_COUNT_*`など）
+- 💬 対話型モードも利用可能（`make run-adk-interactive`）
+
+**環境変数での設定:**
+```bash
+# .envファイルで設定
+ADK_MODEL_NAME=gemini-2.5-pro  # 使用するGeminiモデル（デフォルト: gemini-2.5-flash）
+MAX_TOKENS=20000               # 最大トークン数
+NEWS_COUNT_REPORT=30           # 最新レポートのニュース件数
 ```
 
 ### 🤖 レポート内容の質疑応答する
@@ -135,11 +172,16 @@ Issue や PR のコメントで `@gemini-cli` とメンションすると、Gemi
 |---------|------|
 | `make install` | 📦 依存関係をインストール |
 | `make setup` | ⚙️ 開発環境のセットアップ |
-| `make run` | 📰 最新レポート作成 |
-| `make run-weekly` | 📊 週次レポート生成 |
-| `make run-monthly` | 📈 月次レポート生成 |
-| `make run-topic TOPIC="トピック名"` | 🎯 トピック別レポート生成 |
-| `make test` | 🧪 テストを実行 |
+| `make run` | 📰 最新レポート作成（通常版） |
+| `make run-weekly` | 📊 週次レポート生成（通常版） |
+| `make run-monthly` | 📈 月次レポート生成（通常版） |
+| `make run-topic TOPIC="トピック名"` | 🎯 トピック別レポート生成（通常版） |
+| `make run-adk` | 🤖 最新レポート作成（Google ADK版） |
+| `make run-adk-weekly` | 📊 週次レポート生成（Google ADK版） |
+| `make run-adk-monthly` | 📈 月次レポート生成（Google ADK版） |
+| `make run-adk-topic TOPIC="トピック名"` | 🎯 トピック別レポート生成（Google ADK版） |
+| `make test` | 🧪 テストを実行（通常版） |
+| `make test-adk` | 🧪 テストを実行（Google ADK版） |
 | `make lint` | 🔍 コードのリンティング |
 | `make format` | ✨ コードのフォーマット |
 

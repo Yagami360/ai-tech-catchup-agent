@@ -1,4 +1,4 @@
-.PHONY: install setup run run-weekly run-monthly run-topic test lint format format-check
+.PHONY: install setup run run-weekly run-monthly run-topic run-adk run-adk-weekly run-adk-monthly run-adk-topic test test-adk lint format format-check
 
 # Install dependencies
 install:
@@ -35,6 +35,32 @@ run-topic: install
 	@echo "Running topic report for: $(TOPIC)"
 	uv run python -m src.main topic --topic "$(TOPIC)"
 
+# Run AI Agent for latest report with Google ADK (non-interactive)
+run-adk: install
+	uv run python -m src.google_adk.main
+
+# Run AI Agent for weekly report with Google ADK (non-interactive)
+run-adk-weekly: install
+	uv run python -m src.google_adk.main weekly
+
+# Run AI Agent for monthly report with Google ADK (non-interactive)
+run-adk-monthly: install
+	uv run python -m src.google_adk.main monthly
+
+# Run AI Agent for topic report with Google ADK (non-interactive)
+# Usage: make run-adk-topic TOPIC="RAG"
+run-adk-topic: install
+	@if [ -z "$(TOPIC)" ]; then \
+		echo "Error: Please specify TOPIC. Usage: make run-adk-topic TOPIC=\"your topic\""; \
+		exit 1; \
+	fi
+	@echo "Running ADK topic report for: $(TOPIC)"
+	uv run python -m src.google_adk.main topic --topic "$(TOPIC)"
+
+# Run AI Agent with Google ADK in interactive mode
+# run-adk-interactive: install
+# 	uv run adk run src/google_adk
+
 # Run AI Agent with test mode
 # TEST_MODEL ?= claude-3-5-haiku-20241022
 TEST_MODEL ?= gemini-2.0-flash-lite
@@ -42,6 +68,10 @@ TEST_MODEL ?= gemini-2.0-flash-lite
 test: install
 	@echo "Running test report..."
 	uv run python -m src.main test --model $(TEST_MODEL) --max-tokens 100 --news-count 1 --no-issue --mcp-servers github,huggingface
+
+test-adk: install
+	@echo "Running ADK test report..."
+	uv run python -m src.google_adk.main test --news-count 1 --no-issue
 
 # Run code linting
 lint: install
