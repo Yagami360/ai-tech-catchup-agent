@@ -17,13 +17,20 @@ if str(project_root) not in sys.path:
 
 from src.client import GeminiClient, GitHubClient
 from src.config import settings
-from src.utils import PromptManager
+from src.utils import MCPServerManager, PromptManager
 
 logger = logging.getLogger(__name__)
 
 # グローバルクライアントの初期化
 # 設定から値を取得
 github_client = GitHubClient(token=settings.github_token, repo=settings.github_repo)
+mcp_manager = MCPServerManager()
+
+# 環境変数からMCPサーバーを取得（設定されている場合）
+_default_enabled_mcp_servers = []
+if settings.enabled_mcp_servers:
+    _default_enabled_mcp_servers = [s.strip() for s in settings.enabled_mcp_servers.split(",")]
+    logger.info(f"環境変数からMCPサーバーを有効化: {_default_enabled_mcp_servers}")
 
 # Google ADK用のモデル名を取得（ADK_MODEL_NAMEが優先、次にMODEL_NAME）
 adk_model_name = settings.adk_model_name
@@ -44,7 +51,9 @@ logger.info(f"  - 最大トークン数: {settings.max_tokens}")
 logger.info(f"  - GitHubリポジトリ: {settings.github_repo}")
 
 
-def run_catchup(create_issue: bool = True, news_count: Optional[int] = None, test_mode: bool = False) -> Dict[str, Any]:
+def run_catchup(
+    create_issue: bool = True, news_count: Optional[int] = None, test_mode: bool = False, enabled_mcp_servers: Optional[list] = None
+) -> Dict[str, Any]:
     """
     最新AI技術情報をキャッチアップしてレポートを生成
 
@@ -52,6 +61,7 @@ def run_catchup(create_issue: bool = True, news_count: Optional[int] = None, tes
         create_issue: GitHub Issueを作成するかどうか
         news_count: 取得するニュース件数
         test_mode: テストモードで実行するかどうか
+        enabled_mcp_servers: 有効にするMCPサーバーのリスト
 
     Returns:
         実行結果の辞書
@@ -62,9 +72,10 @@ def run_catchup(create_issue: bool = True, news_count: Optional[int] = None, tes
         # プロンプトの準備
         logger.info("プロンプトを準備中...")
         prompt_type = "test_report" if test_mode else "report"
+        mcp_servers = enabled_mcp_servers or []
         prompt = prompt_manager.get_prompt(
             prompt_type,
-            enabled_mcp_servers=[],
+            enabled_mcp_servers=mcp_servers,
             news_count=str(news_count or settings.news_count),
         )
         if not prompt:
@@ -126,12 +137,13 @@ def run_catchup(create_issue: bool = True, news_count: Optional[int] = None, tes
         return {"status": "error", "message": str(e)}
 
 
-def weekly_report(create_issue: bool = True) -> Dict[str, Any]:
+def weekly_report(create_issue: bool = True, enabled_mcp_servers: Optional[list] = None) -> Dict[str, Any]:
     """
     週次レポートを生成
 
     Args:
         create_issue: GitHub Issueを作成するかどうか
+        enabled_mcp_servers: 有効にするMCPサーバーのリスト
 
     Returns:
         実行結果の辞書
@@ -140,7 +152,8 @@ def weekly_report(create_issue: bool = True) -> Dict[str, Any]:
 
     try:
         # プロンプトの準備
-        prompt = prompt_manager.get_prompt("weekly_report", enabled_mcp_servers=[])
+        mcp_servers = enabled_mcp_servers or []
+        prompt = prompt_manager.get_prompt("weekly_report", enabled_mcp_servers=mcp_servers)
         if not prompt:
             logger.error("週次レポートプロンプトを取得できませんでした")
             return {"status": "error", "message": "プロンプトの取得に失敗しました"}
@@ -203,12 +216,13 @@ def weekly_report(create_issue: bool = True) -> Dict[str, Any]:
         return {"status": "error", "message": str(e)}
 
 
-def monthly_report(create_issue: bool = True) -> Dict[str, Any]:
+def monthly_report(create_issue: bool = True, enabled_mcp_servers: Optional[list] = None) -> Dict[str, Any]:
     """
     月次レポートを生成
 
     Args:
         create_issue: GitHub Issueを作成するかどうか
+        enabled_mcp_servers: 有効にするMCPサーバーのリスト
 
     Returns:
         実行結果の辞書
@@ -217,7 +231,8 @@ def monthly_report(create_issue: bool = True) -> Dict[str, Any]:
 
     try:
         # プロンプトの準備
-        prompt = prompt_manager.get_prompt("monthly_report", enabled_mcp_servers=[])
+        mcp_servers = enabled_mcp_servers or []
+        prompt = prompt_manager.get_prompt("monthly_report", enabled_mcp_servers=mcp_servers)
         if not prompt:
             logger.error("月次レポートプロンプトを取得できませんでした")
             return {"status": "error", "message": "プロンプトの取得に失敗しました"}
@@ -276,7 +291,9 @@ def monthly_report(create_issue: bool = True) -> Dict[str, Any]:
         return {"status": "error", "message": str(e)}
 
 
-def topic_report(topic: str, create_issue: bool = True, news_count: Optional[int] = None) -> Dict[str, Any]:
+def topic_report(
+    topic: str, create_issue: bool = True, news_count: Optional[int] = None, enabled_mcp_servers: Optional[list] = None
+) -> Dict[str, Any]:
     """
     特定トピックのレポートを生成
 
@@ -284,6 +301,7 @@ def topic_report(topic: str, create_issue: bool = True, news_count: Optional[int
         topic: レポート対象のトピック
         create_issue: GitHub Issueを作成するかどうか
         news_count: 取得するニュース件数
+        enabled_mcp_servers: 有効にするMCPサーバーのリスト
 
     Returns:
         実行結果の辞書
@@ -292,9 +310,10 @@ def topic_report(topic: str, create_issue: bool = True, news_count: Optional[int
 
     try:
         # プロンプトの準備
+        mcp_servers = enabled_mcp_servers or []
         prompt = prompt_manager.get_prompt(
             "topic_report",
-            enabled_mcp_servers=[],
+            enabled_mcp_servers=mcp_servers,
             topic=topic,
             news_count=str(news_count or settings.news_count),
         )
@@ -355,6 +374,24 @@ def topic_report(topic: str, create_issue: bool = True, news_count: Optional[int
 # モデル名は上記で初期化済みのadk_model_nameを使用
 logger.info(f"Google ADK Agent を初期化中... モデル: {adk_model_name}")
 
+# 基本ツール（レポート生成関数）
+base_tools = [run_catchup, weekly_report, monthly_report, topic_report]
+
+# MCPツールセットの追加（環境変数で設定されている場合）
+all_tools = base_tools.copy()
+if _default_enabled_mcp_servers:
+    try:
+        from .mcp_tools import create_mcp_toolsets
+
+        mcp_toolsets = create_mcp_toolsets(_default_enabled_mcp_servers)
+        if mcp_toolsets:
+            all_tools.extend(mcp_toolsets)
+            logger.info(f"MCPツールセットを追加しました: {len(mcp_toolsets)}個")
+    except ImportError as e:
+        logger.warning(f"MCPツールのインポートに失敗しました（ADKのMCPサポートが必要）: {e}")
+    except Exception as e:
+        logger.error(f"MCPツールセットの作成に失敗しました: {e}")
+
 root_agent = Agent(
     model=adk_model_name,
     name="ai_tech_catchup_agent",
@@ -412,6 +449,13 @@ root_agent = Agent(
 ## 動作
 ユーザーからの要求を理解し、適切な関数を呼び出してレポートを生成してください。
 レポートは自動的にGitHub Issueとして作成され、URLが返されます。
-関数実行後、結果の概要とIssue URLをユーザーに伝えてください。""",
-    tools=[run_catchup, weekly_report, monthly_report, topic_report],
+関数実行後、結果の概要とIssue URLをユーザーに伝えてください。
+
+## 利用可能なMCPツール
+MCPサーバーが有効化されている場合、以下のような追加ツールが利用可能です:
+- GitHub MCP Server: GitHubリポジトリ、Issue、PRの操作
+- Hugging Face MCP Server: AIモデル、データセット、論文の検索
+
+これらのツールを活用して、より詳細で正確なレポートを生成してください。""",
+    tools=all_tools,
 )

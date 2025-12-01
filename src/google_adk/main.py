@@ -49,29 +49,50 @@ def main() -> None:
         action="store_true",
         help="GitHub Issueを作成しない",
     )
+    parser.add_argument(
+        "--mcp-servers",
+        type=str,
+        default=None,
+        help="有効にする MCP サーバー（カンマ区切り、例: github,huggingface）",
+    )
     args = parser.parse_args()
     create_issue = not args.no_issue
+
+    # MCP サーバーの有効化（CLI引数または環境変数）
+    enabled_mcp_servers = []
+    if args.mcp_servers:
+        enabled_mcp_servers = [s.strip() for s in args.mcp_servers.split(",")]
+        logger.info(f"MCP サーバーを有効化: {enabled_mcp_servers}")
+
+    # Note: Google ADK版では現時点でMCPサーバーの直接統合はサポートされていません
+    # プロンプトにMCPツールの使用指示を含めることで間接的に対応します
+    if enabled_mcp_servers:
+        logger.warning("Google ADK版では MCP サーバーの直接統合は未サポートです。プロンプトに指示を含めます。")
 
     # レポート実行
     try:
         if args.mode == "weekly":
             logger.info("週次レポートを生成中...")
-            result = agent.weekly_report(create_issue=create_issue)
+            result = agent.weekly_report(create_issue=create_issue, enabled_mcp_servers=enabled_mcp_servers)
         elif args.mode == "monthly":
             logger.info("月次レポートを生成中...")
-            result = agent.monthly_report(create_issue=create_issue)
+            result = agent.monthly_report(create_issue=create_issue, enabled_mcp_servers=enabled_mcp_servers)
         elif args.mode == "topic":
             if not args.topic:
                 logger.error("トピックモードを使用する場合は --topic オプションでトピック名を指定してください")
                 sys.exit(1)
             logger.info(f"トピックレポートを生成中: {args.topic}")
-            result = agent.topic_report(topic=args.topic, create_issue=create_issue, news_count=args.news_count)
+            result = agent.topic_report(
+                topic=args.topic, create_issue=create_issue, news_count=args.news_count, enabled_mcp_servers=enabled_mcp_servers
+            )
         elif args.mode == "test":
             logger.info("テストモードで最新レポートを生成中...")
-            result = agent.run_catchup(create_issue=create_issue, news_count=args.news_count, test_mode=True)
+            result = agent.run_catchup(create_issue=create_issue, news_count=args.news_count, test_mode=True, enabled_mcp_servers=enabled_mcp_servers)
         else:
             logger.info("最新レポートを生成中...")
-            result = agent.run_catchup(create_issue=create_issue, news_count=args.news_count, test_mode=False)
+            result = agent.run_catchup(
+                create_issue=create_issue, news_count=args.news_count, test_mode=False, enabled_mcp_servers=enabled_mcp_servers
+            )
 
         # 結果を出力
         logger.info(f"実行結果: {result}")

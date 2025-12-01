@@ -133,6 +133,20 @@ MAX_TOKENS=20000               # 最大トークン数
 NEWS_COUNT_REPORT=30           # 最新レポートのニュース件数
 ```
 
+**MCPサーバーの使用:**
+```bash
+# MCPサーバーを有効化して実行
+uv run python -m src.google_adk.main --mcp-servers github,huggingface
+
+# 週次レポートでMCPサーバーを使用
+uv run python -m src.google_adk.main weekly --mcp-servers github
+
+# トピックレポートでMCPサーバーを使用
+uv run python -m src.google_adk.main topic --topic "RAG" --mcp-servers huggingface
+```
+
+> **Note**: Google ADK版は[ADKのMcpToolset](https://google.github.io/adk-docs/tools-custom/mcp-tools/)を使用し、各MCPサーバーをツールセットとして統合します。各MCPサーバーは`StdioConnectionParams`を使用してstdioプロトコル経由で接続され、Geminiモデルが必要に応じてMCPツールを呼び出します。
+
 ### 🤖 レポート内容の質疑応答する
 
 作成された Issue レポートの内容について、AI モデルと質疑応答することもできます。
@@ -187,7 +201,12 @@ Issue や PR のコメントで `@gemini-cli` とメンションすると、Gemi
 
 ### 🔌 MCP サーバー統合
 
-AI Tech Catchup Agent は MCP (Model Context Protocol) サーバーをサポートしており、Claude モデルを使用時に外部ツールやサービスと連携できます。
+AI Tech Catchup Agent は MCP (Model Context Protocol) サーバーをサポートしています。
+
+**対応状況:**
+- **通常版（Claude）**: ✅ 完全サポート（Claude Code SDK経由でMCPサーバーと直接統合）
+- **通常版（Gemini）**: ☓ 未サポート
+- **Google ADK版（Gemini）**: ✅ 完全サポート（[ADKのMcpToolset](https://google.github.io/adk-docs/tools-custom/mcp-tools/)を使用）
 
 #### 利用可能な MCP サーバー
 
@@ -203,19 +222,9 @@ AI Tech Catchup Agent は MCP (Model Context Protocol) サーバーをサポー�
 
 #### MCPサーバーの有効化
 
-**環境変数で設定**:
 ```bash
 # .env ファイルに追加
 ENABLED_MCP_SERVERS=github,huggingface
-```
-
-**CLIで指定**:
-```bash
-# GitHub MCP サーバーを使用
-uv run python -m src.main --mcp-servers github
-
-# 複数のMCPサーバーを使用
-uv run python -m src.main --mcp-servers github,huggingface
 ```
 
 #### 事前準備
