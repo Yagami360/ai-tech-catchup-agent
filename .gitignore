@@ -1,0 +1,13 @@
+.DS_Store
+*.code-workspace
+*.pyc
+*.log
+.env
+.mypy_cache/
+
+.old/
+.debug/
+.logs/
+
+.gemini/
+gha-creds-*.json

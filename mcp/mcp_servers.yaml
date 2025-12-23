@@ -1,0 +1,42 @@
+# MCP Server Configuration
+# 各 MCP サーバーの設定を定義
+
+servers:
+  github:
+    name: "GitHub MCP Server"
+    type: "stdio"
+    command: "npx"
+    args:
+      - "-y"
+      - "@github/github-mcp-server"
+    env:
+      GITHUB_TOKEN: "${GITHUB_TOKEN}"
+    allowed_tools:
+      - "mcp__github__*"
+    description: "GitHub リポジトリ、Issue、PR の操作"
+
+  huggingface:
+    name: "Hugging Face Hub Semantic Search MCP Server"
+    type: "stdio"
+    command: "uvx"
+    args:
+      - "git+https://github.com/davanstrien/hub-semantic-search-mcp.git"
+    env:
+      HF_SEARCH_API_URL: "https://davanstrien-huggingface-datasets-search-v2.hf.space"
+      HF_TOKEN: "${HF_TOKEN}"
+    allowed_tools:
+      - "mcp__huggingface__*"
+    description: "Hugging Face Hub のリソースを検索・取得"
+
+  # slack:
+  #   name: "Slack MCP Server"
+  #   type: "stdio"
+  #   command: "npx"
+  #   args:
+  #     - "-y"
+  #     - "@modelcontextprotocol/server-slack"
+  #   env:
+  #     SLACK_BOT_TOKEN: "${SLACK_BOT_TOKEN}"
+  #   allowed_tools:
+  #     - "mcp__slack__*"
+  #   description: "Slack メッセージの送受信"

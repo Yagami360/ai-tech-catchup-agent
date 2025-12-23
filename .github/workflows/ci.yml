@@ -1,0 +1,64 @@
+name: CI
+
+permissions:
+  contents: read
+  checks: read
+  pull-requests: read
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+    types: [opened, synchronize, closed]
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+env:
+  # test を実行すると API 利用料が発生するのでデフォルトで実行しない
+  RUN_TESTS: false
+  # RUN_TESTS: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: make install
+
+      - name: Run linting
+        run: make lint
+
+      - name: Run code formatting check
+        run: make format-check
+
+      - name: Run tests
+        if: env.RUN_TESTS == 'true'
+        run: make test
+        env:
+          ENABLED_MCP_SERVERS: ${{ vars.ENABLED_MCP_SERVERS }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}

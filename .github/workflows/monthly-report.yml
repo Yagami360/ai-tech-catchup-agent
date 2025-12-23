@@ -1,0 +1,80 @@
+name: Monthly Report
+
+on:
+  workflow_dispatch:
+    inputs:
+      news_count:
+        description: '取得するニュースの件数'
+        required: false
+        type: number
+        default: 20
+  schedule:
+    # 毎月１日 9:00 (JST)
+    - cron: '0 0 1 * *'
+
+jobs:
+  ai-tech-catchup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Claude Code CLI
+        run: |
+          npm install -g @anthropic-ai/claude-code
+
+      - name: Install GitHub CLI
+        run: |
+          type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+
+      - name: Install dependencies
+        run: |
+          uv sync --frozen
+
+      - name: Run AI Tech Catchup Agent
+        run: |
+          make run-monthly
+        env:
+          MODEL_NAME: ${{ vars.MODEL_NAME }}
+          ENABLED_MCP_SERVERS: ${{ vars.ENABLED_MCP_SERVERS }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          NEWS_COUNT_MONTHLY_REPORT: ${{ inputs.news_count || vars.NEWS_COUNT_MONTHLY_REPORT }}
+
+      - name: Create summary
+        if: always()
+        run: |
+          echo "## AI Tech Catchup Agent Execution Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **実行日時**: $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "- **リポジトリ**: ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **ワークフロー**: ${{ github.workflow }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **実行結果**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
